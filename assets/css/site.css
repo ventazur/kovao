@@ -1,0 +1,304 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* --------------------------------------------------------------------
+ *
+ * KOVAO.com > General
+ *
+ * -------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------
+ *
+ * Espaces
+ *
+ * -------------------------------------------------------------------- */
+
+.cspace { height: 50px; }
+.dspace { height: 41px; }
+.tspace { height: 30px; }
+.space  { height: 20px; }
+.hspace { height: 10px; }
+.qspace { height:  5px; }
+
+/* --------------------------------------------------------------------
+ *
+ * Styles generaux
+ *
+ * -------------------------------------------------------------------- */
+
+body {
+    overflow-y: scroll
+}
+
+.line {
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.mono {
+    font-family: 'Ubuntu Mono', monospace;
+}
+
+.fa-exclamation-circle {
+    color: crimson;
+    margin-right: 5px;
+}
+
+var {
+    font-size: 1.1em;
+    color: red;
+    font-weight: bold;
+    font-style: normal;
+}
+
+.btn {
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: dodgerblue;
+    border-color: dodgerblue;
+}
+
+.btn-outline-primary {
+    border-color: dodgerblue;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Header & Footer
+ *
+ * -------------------------------------------------------------------- */
+
+nav#navbar-kovao {
+    border-bottom: 5px solid dodgerblue;
+}
+
+nav#navbar-ecole {
+    color: dodgerblue;
+    border-bottom: 1px solid dodgerblue;
+    border-bottom: 1px solid #64B5F6;
+    /* box-shadow: 1px 1px 3px #ccc; */
+}
+
+#navbar .navbar-brand {
+    color: skyblue;
+    font-family: Lato;
+    font-weight: 100;
+    letter-spacing: -1px;
+}   
+
+#navbar .navbar-brand i {
+}
+
+#navbar a.nav-link {
+    color: #eee;
+}
+#navbar a.nav-link:hover {
+    color: dodgerblue;
+}
+
+#footer {
+    margin-top: 50px;
+    padding-top: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 0.9em;
+    font-family: Lato;
+    font-weight: 300;
+    border-top: 1px solid #ddd;
+    background-color: #f7f7f7;
+    box-shadow: 0 50vh 0 50vh #f7f7f7;
+}
+
+#terminer-udata {
+    color: crimson;
+    text-decoration: none;
+}
+
+#terminer-udata:hover {
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Navigation
+ *
+ * -------------------------------------------------------------------- */
+
+nav {
+    font-family: Lato;
+    font-weight: 300;
+    font-size: 0.9em;
+}
+
+#nav-inscription a.nav-link {
+    padding-left: 8px;
+    padding-right: 8px;
+    border: 1px solid steelblue;
+    border-radius: 5px;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Autres
+ *
+ * -------------------------------------------------------------------- */
+
+div.pas-de-cell {
+    margin-bottom: 30px; 
+    text-align: center; 
+    color: crimson; 
+    font-weight: bold; 
+    border: 1px solid crimson; 
+    padding: 15px; 
+    border-radius: 3px
+}
+
+.tri-button {
+    cursor: pointer;
+}
+
+.copier-presse-papier {
+    cursor: pointer;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Espaces (pour les usagers de l'editeur d'evaluation)
+ *
+ * -------------------------------------------------------------------- */
+
+.espace1 {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.espace2 {
+    margin-left: 7px;
+    margin-right: 7px;
+}
+.espace3, .eqchm-sp, .espace-gd {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.espace4 {
+    margin-left: 12px;
+    margin-right: 12px;
+}
+.espace5 {
+    margin-left: 15px;
+    margin-right: 15px;
+}
+.espace6 {
+    margin-left: 17px;
+    margin-right: 17px;
+}
+.espace7 {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Resultats
+ *
+ * -------------------------------------------------------------------- */
+
+tr.soumissions-liste-toggle {
+    background-color: #eee
+    cursor: pointer;
+}
+tr.soumissions-liste-toggle:hover {
+    background-color: #ddd;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Configuration
+ *
+ * -------------------------------------------------------------------- */
+
+#configuration div.section-titre {
+    margin-top: 10px;
+    padding: 10px;
+    border: 2px solid lavender;
+    border-bottom: 0;
+    background: lavender;
+    font-family: Lato;
+    font-size: 20px;
+}
+
+#configuration div.evaluations-cours-titre {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid lavender;
+}
+
+#configuration div.evaluations-cours {
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Admin
+ *
+ * -------------------------------------------------------------------- */
+
+div.admin-groupe {
+    padding: 20px;
+    background: #f7f7f7;
+    border: 1px solid dodgerblue;
+    border-radius: 3px;
+
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Laboratoire
+ *
+ * -------------------------------------------------------------------- */
+
+.lab-badge {
+    padding: 4px 5px 4px 5px;
+    border-radius: 3px;
+    background: #444; 
+    color: #fff; 
+    font-size: 0.7em;
+    font-weight: 300;
+    font-family: Lato;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Icons
+ *
+ * -------------------------------------------------------------------- */
+
+.bi {
+    width: 22px;
+    height: 22px;
+}
+
+.bi-md {
+    width: 20px;
+    height: 20px;
+}
+
+.bi-sm {
+    width: 18px;
+    height: 18px;
+}
+
+.bi-xs {
+    width: 16px;
+    height: 16px;
+}
+
+.bi-xxs {
+    width: 14px;
+    height: 14px;
+}

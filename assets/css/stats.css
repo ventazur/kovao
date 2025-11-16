@@ -1,0 +1,179 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* --------------------------------------------------------------------
+ *
+ * KOVAO.com > Statistiques
+ *
+ * -------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------
+ *
+ * Statistiques > Evaluation
+ *
+ * -------------------------------------------------------------------- */
+
+#stats-evaluation-titre {
+    border: 2px solid #616161;
+    background: #E3F2FD;
+    padding: 20px;
+}
+
+#stats-evaluation-info-titre {
+    margin-top: 20px;
+    padding: 10px 15px 10px 15px;
+    font-family: Lato;
+    font-weight: 300;
+    background: #9E9E9E;
+    color: #fff;
+}
+
+#stats-evaluation-info {
+    border: 1px solid #9E9E9E;
+    padding-top: 15px;
+    background: #fafafa;
+    font-size: 0.9em;
+}
+
+#stats-questions-titre {
+    margin-top: 20px;
+    padding: 10px 15px 10px 15px;
+    font-family: Lato;
+    font-weight: 300;
+    background: #616161;
+    color: #fff;
+}
+
+#stats-questions {
+    border: 1px solid #616161;
+}
+
+#stats-questions thead td {
+    border-bottom: 1px solid #616161;
+    background: #fff;
+}
+
+#stats-questions tr td {
+    background: #fafafa;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Statistiques > Question
+ *
+ * -------------------------------------------------------------------- */
+
+.popover{
+    max-width: 100%; /* Max Width of the popover (depending on the container!) */
+}
+
+#stats-question-titre {
+    border: 2px solid #5C6BC0;
+    background: #FFFDE8;
+    padding: 20px;
+}
+
+#stats-question-info-titre {
+    margin-top: 20px;
+    padding: 10px 15px 10px 15px;
+    font-family: Lato;
+    font-weight: 300;
+    background: #9FA8DA;
+    color: #fff;
+}
+
+#stats-question-info {
+    border: 1px solid #9FA8DA;
+    padding-top: 15px;
+    background: #f8f9fa;
+    font-size: 0.9em;
+}
+
+#stats-question-reponse-correcte-titre {
+    margin-top: 20px;
+    padding: 10px 15px 10px 15px;
+    font-family: Lato;
+    font-weight: 300;
+    background: #9FA8DA;
+    color: #fff;
+}
+
+#stats-question-reponse-correcte {
+    border: 1px solid #9FA8DA;
+    padding: 20px;
+    background: #f8f9fa;
+    font-size: 0.9em;
+}
+
+/*
+.rc-qtype-1, 
+.rc-qtype-2, 
+.rc-qtype-3,
+.rc-qtype-4,
+.rc-qtype-5, 
+.rc-qtype-6,
+.rc-qtype-7,
+.rc-qtype-8,
+.rc-qtype-9,
+.rc-qtype-10 {
+    padding: 20px;
+}
+*/
+
+#stats-reponses-titre {
+    margin-top: 20px;
+    padding: 10px 15px 10px 15px;
+    font-family: Lato;
+    font-weight: 300;
+    background: #3F51B5;
+    color: #fff;
+}
+
+#stats-reponses {
+    border: 1px solid #3F51B5;
+}
+
+#stats-reponses thead td {
+    border-bottom: 1px solid #3F51B5;
+    background: #fff;
+}
+
+#stats-reponses tr td {
+    background: #f8f9fa;
+}
+
+#stats-reponses tbody tr:hover td {
+    background: #E8EAF6;
+}
+
+/* ------------------------------------------------------------------
+ *
+ * Barre de defilement
+ * 
+ * ------------------------------------------------------------------ */
+
+.defilement {
+}
+
+.defilement-haut, .defilement-bas {
+    padding: 7px 8px 7px 8px;
+    background: #E3F2FD;
+    border-left: 0;
+    border-right: 0;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+.defilement-haut {
+    margin-top: 5px;
+    margin-bottom: 30px;
+}
+
+.defilement-bas {
+    margin-top: 20px;
+    margin-bottom: 0px;
+}

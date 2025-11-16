@@ -1,0 +1,224 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* ============================================================================
+ *
+ * Evaluations CSS
+ *
+ * ============================================================================ */
+
+/* ----------------------------------------------------------------------------
+ *
+ * Filtrer par cours
+ *
+ * ----------------------------------------------------------------------------- */
+
+#lister-cours .cours:hover {
+    background: #ddd;
+    color: #222;
+}
+
+#lister-cours .cours, #lister-cours .cours-vide {
+    padding: 10px 20px 10px 20px;
+    cursor: pointer;
+    text-align: center;
+}
+
+#lister-cours {
+    margin-top: 20px;
+    font-family: Lato;
+    font-weight: 400;
+    font-size: 0.95em;
+}
+
+#mes-evaluations #lister-cours-titre {
+    padding-bottom: 10px;
+    color: dodgerblue;
+}
+
+#mes-evaluations #lister-cours-contenu {
+    background: #f8f9fa;
+    border: 1px solid dodgerblue;
+}
+
+#mes-evaluations #lister-cours .cours.actif {
+    background: dodgerblue;
+    color: #fff;
+}
+
+#mes-archives #lister-cours-titre {
+    padding-bottom: 10px;
+    color: dodgerblue;
+}
+
+#mes-archives #lister-cours-contenu {
+    background: #f8f9fa;
+    border: 1px solid dodgerblue;
+}
+
+#mes-archives #lister-cours .cours.actif {
+    background: dodgerblue;
+    color: #fff;
+}
+
+/* ----------------------------------------------------------------------------
+ *
+ * Filtrer par cours > Evaluations du groupe
+ *
+ * ----------------------------------------------------------------------------- */
+
+#evaluations #lister-cours-titre {
+    color: #673AB7;
+}
+
+#evaluations #lister-cours-contenu {
+    border: 1px solid #673A87;
+}
+
+#evaluations #lister-cours .cours.actif {
+    background: #7E57C2;
+    color: #fff;
+}
+
+#archives  #lister-cours-titre {
+    color: #673AB7;
+}
+
+#archives #lister-cours-contenu {
+    border: 1px solid #673A87;
+}
+
+#archives #lister-cours .cours.actif {
+    background: #7E57C2;
+    color: #fff;
+}
+
+/* ----------------------------------------------------------------------------
+ *
+ * Filtrer par cours > Mes archives
+ *
+ * ----------------------------------------------------------------------------- */
+
+#mes-archives #lister-cours-titre {
+    color: #0097A7;
+}
+
+#mes-archives #lister-cours-contenu {
+    border: 1px solid #0097A7;
+}
+
+#mes-archives #lister-cours .cours.actif {
+    background: #0097A7;
+}
+
+/* ----------------------------------------------------------------------------
+ *
+ * Lister les evaluations
+ *
+ * ----------------------------------------------------------------------------- */
+
+a.evaluation-liste {
+    text-decoration: none;
+    color: #222;
+}
+
+div.evaluation-liste {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid dodgerblue;
+    background: #E8EAF6;
+    background: #E3F2FD;
+}
+
+div.evaluation-liste:hover {
+    background-color: #BBDEFB;
+    cursor: pointer;
+}
+
+span.evaluation-titre-code-cours {
+    margin-right: 5px; 
+    padding: 3px 5px 3px 5px; 
+    border-radius: 3px;
+    font-weight: 300;
+    color: #90CAF9;
+}
+
+/* ----------------------------------------------------------------------------
+ *
+ * Lister les evaluations > Evaluations du groupe
+ *
+ * ----------------------------------------------------------------------------- */
+
+#evaluations div.evaluation-liste {
+    border: 1px solid mediumpurple;
+    background-color: lavender;
+}
+
+#evaluations div.evaluation-liste:hover {
+    background-color: #D1C4E9;
+    color: #000;
+}
+
+#evaluations span.evaluation-titre-code-cours {
+    color: #B39DDB;
+}
+
+#archives div.evaluation-liste {
+    border: 1px solid mediumpurple;
+    background-color: lavender;
+}
+
+#archives div.evaluation-liste:hover {
+    background-color: #D1C4E9;
+    color: #000;
+}
+
+#archives span.evaluation-titre-code-cours {
+    color: #B39DDB;
+}
+
+/* ----------------------------------------------------------------------------
+ *
+ * Lister les evaluations > Archives
+ *
+ * ----------------------------------------------------------------------------- */
+
+#archives div.evaluation-liste {
+    border: 1px solid #FF8A65;
+    background-color: #FBE9E7;
+}
+
+#archives div.evaluation-liste:hover {
+    background-color: #B2DFDB;
+    background-color: #FFAB91;
+    color: #fff
+}
+
+#archives span.evaluation-titre-code-cours {
+    color: #4DB6AC;
+    color: #FF7043;
+}
+
+/* ----------------------------------------------------------------------------
+ *
+ * Lister les evaluations > Mes archives
+ *
+ * ----------------------------------------------------------------------------- */
+
+#mes-archives div.evaluation-liste {
+    border: 1px solid #0097A7;
+    background-color: #E0F2F1;
+}
+
+#mes-archives div.evaluation-liste:hover {
+    background-color: #B2DFDB;
+    color: #000;
+}
+
+#mes-archives span.evaluation-titre-code-cours {
+    color: #4DB6AC;
+}

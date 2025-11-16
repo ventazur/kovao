@@ -1,0 +1,46 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* ----------------------------------------------------------------------------
+ *
+ * KOVAO.com > Etu.css
+ *
+ * ----------------------------------------------------------------------------- */
+
+/*
+ *
+ * Resultats
+ *
+ */
+
+#resultats-etudiants-table tbody td {
+    vertical-align: middle;
+}
+
+#resultats-etudiants-table tbody tr:hover {
+    background: #f3f3f3; 
+}
+
+.rang-cours {
+    width: 200px;
+    margin-right: 10px;
+    padding: 15px;
+    border-radius: 3px;
+    text-align: center;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+.rang-cours-rang {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #0D47A1;
+    color: #5C6BC0;
+    color: #1976D2;
+    color: #512DA8;
+}
+

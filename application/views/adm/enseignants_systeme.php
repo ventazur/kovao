@@ -1,0 +1,131 @@
+<?
+/* ----------------------------------------------------------------------------
+ *
+ * Administration > Systeme > Enseignants
+ *
+ * ---------------------------------------------------------------------------- */ ?>
+
+<div id="admin-systeme-enseignants">
+
+    <h5>Les enseignants (<?= count($enseignants); ?>)</h5> 
+
+    <div class="space"></div>
+
+    <? if (empty($enseignants)) : ?>
+
+        <div class="space"></div>
+
+        <i class="fa fa-exclamation-circle" style="color: crimson"></i> Aucun enseignant
+
+    <? else : ?>
+
+        <table id="enseignants" class="table admin-table" style="font-size: 0.85em">
+
+            <tr style="background: inherit">
+                <th style="width: 80px; text-align: center">
+                    ID
+                    <span class="tri-button" data-clef="clef_tri_enseignant_id"><i class="fa fa-sort-numeric-asc" style="margin-left: 5px"></i></span>
+                </th>
+                <th>
+                    Nom
+                    <span class="tri-button" data-clef="clef_tri_nom"><i class="fa fa-sort-alpha-asc" style="margin-left: 5px"></i></span>
+                </th>
+                <th style="width: 120px; text-align: center">
+                    Privilège
+                    <span class="tri-button" data-clef="clef_tri_privilege" data-ordre="desc"><i class="fa fa-sort-numeric-desc" style="margin-left: 5px"></i></span>
+                </th>
+                <th style="width: 130px; text-align: center">
+                    Soumissions
+                    <span class="tri-button" data-clef="clef_tri_soumissions" data-ordre="desc"><i class="fa fa-sort-numeric-desc" style="margin-left: 5px"></i></span>
+                </th>
+                <th style="width: 180px; text-align: center">
+                    Date d'inscription
+                    <span class="tri-button" data-clef="clef_tri_inscription" data-ordre="desc"><i class="fa fa-sort-numeric-desc" style="margin-left: 5px"></i></span>
+                </th>
+                <th style="width: 180px; text-align: center">
+                    Dernière activité
+                    <span class="tri-button" data-clef="clef_tri_activite" data-ordre="desc"><i class="fa fa-sort-numeric-desc" style="margin-left: 5px"></i></span>
+                </th>
+                <th style="width: 120px; text-align: center">
+                    Activité
+                    <span class="tri-button" data-clef="clef_tri_compteur" data-ordre="desc"><i class="fa fa-sort-numeric-desc" style="margin-left: 5px"></i></span>
+                </th>
+                <th style="width: 20px">
+                    <svg viewBox="0 0 16 16" class="bi-xxs bi-person-bounding-box" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1h-3zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5zM.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5z"/>
+                      <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                    </svg>
+                </th>
+            </tr>
+
+            <? 
+                $activite_totale = 0;
+                $soumissions_totales = 0;
+
+                $s_total = 0;
+                $s_semestre = 0;
+                $nb_enseignants = 0;
+
+                foreach($enseignants as $e) : 
+        
+                    if (array_key_exists($e['enseignant_id'], $soumissions_total))
+                    {
+                        $s_total += $soumissions_total[$e['enseignant_id']];
+                    }    
+
+                    if (array_key_exists($e['enseignant_id'], $soumissions_semestre))
+                    {
+                        $s_semestre += $soumissions_semestre[$e['enseignant_id']];
+                    }    
+
+                    $activite_totale += $e['activite_compteur']; 
+                    $soumissions_totales += ( ! array_key_exists($e['enseignant_id'], $soumissions_total) ? 0 : $soumissions_total[$e['enseignant_id']]);
+            ?>
+
+                <tr data-clef_tri_enseignant_id="<?= $e['enseignant_id']; ?>"
+                    data-clef_tri_nom="<?= $e['nom'] . ' ' . $e['prenom']; ?>"
+                    data-clef_tri_privilege="<?= $e['privilege']; ?>"
+                    data-clef_tri_soumissions="<?= ( ! array_key_exists($e['enseignant_id'], $soumissions_total) ? 0 : $soumissions_total[$e['enseignant_id']]); ?>"
+                    data-clef_tri_inscription="<?= $e['inscription_epoch']; ?>"
+                    data-clef_tri_activite="<?= $e['derniere_activite_epoch']; ?>"
+                    data-clef_tri_compteur="<?= $e['activite_compteur']; ?>">
+                    <td style="text-align: center"><?= $e['enseignant_id']; ?></td>
+                    <td style="padding-top: 15px">
+                        <a href="<?= base_url() . 'admin/enseignant/' . $e['enseignant_id']; ?>">
+                            <?= $e['prenom'] . ' ' . mb_strtoupper($e['nom']); ?>
+                        </a>
+                            <i class="fa fa-envelope-o" style="margin-left: 5px; cursor: pointer" data-toggle="tooltip" title="<?= $e['courriel'] ?>"></i>
+                        <? if ($e['actif']) : ?>
+                            <i class="fa fa-check-circle" style="margin-left: 5px"></i>
+                        <? else : ?>
+                            <i class="fa fa-times-circle" style="margin-left: 5px;"></i>
+                        <? endif; ?>
+                    </td>
+                    <td style="padding-top: 15px; text-align: center"><?= $e['privilege']; ?></td>
+                    <td style="text-align: center">
+                        <?= ( ! array_key_exists($e['enseignant_id'], $soumissions_total) ? 0 : $soumissions_total[$e['enseignant_id']]); ?>
+                    </td>
+                    <td class="mono" style="text-align: center"><?= $e['inscription_date']; ?></td>
+                    <td class="mono" style="text-align: center"><?= $e['derniere_activite_date']; ?></td>
+                    <td style="text-align: center"><?= $e['activite_compteur']; ?></td>
+                    <td>
+                        <a target="_blank" href="<?= base_url() . 'admin/usurper/enseignant/' . $e['enseignant_id']; ?>">
+                            <svg viewBox="0 0 16 16" class="bi-xxs bi-person-bounding-box" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                              <path fill-rule="evenodd" d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1h-3zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5zM.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5z"/>
+                              <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+
+            <? endforeach; ?>
+        </table>
+
+    <? endif; ?>
+
+    <div class="space"></div>
+
+    Le nombre total de soumissions : <?= $soumissions_totales; ?><br />
+    L'activité totale des enseignants : <?= $activite_totale; ?>
+
+</div>

@@ -1,0 +1,52 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* --------------------------------------------------------------------
+ *
+ * KOVAO.com > Recherche
+ *
+ * -------------------------------------------------------------------- */
+
+#recherche input {
+}
+
+#recherche #form-options {
+    margin-left: 5px;
+}
+
+#recherche #form-options label {
+    font-size: 0.9em;
+}
+
+#resultats-montrer {
+}
+
+#resultats-table table {
+    font-size: 0.9em;
+    border: 1px solid #ddd;
+}
+
+#resultats-table thead tr {
+    color: #fff;
+    background-color: dodgerblue;
+    border: 1px solid dodgerblue;
+}
+
+#resultats-table thead th {
+    border: 0;
+}
+
+#resultats-table tbody tr:first-child td {
+    border-top: 0;
+}
+
+#resultats-table tbody td {
+}
+
+#resultats-table td {
+    background-color: #f7f7f7;
+}

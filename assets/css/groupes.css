@@ -1,0 +1,70 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* --------------------------------------------------------------------
+ *
+ * KOVAO.com > Groupes
+ *
+ * -------------------------------------------------------------------- */
+
+div.groupe-item {
+    border: 1px solid #9FA8DA;
+    border-radius: 3px;
+    padding: 15px 20px 15px 10px;
+    margin-bottom: 20px;
+}
+div.groupe-item:hover {
+    background: #E8EAF6;
+}
+
+div.groupe-item.courant {
+    border: 1px solid #7986CB;
+    border: 1px solid #9FA8DA;
+    color: #fff;
+    background: #9FA8DA;
+    background: #C5CAE9;
+}
+div.groupe-item.courant:hover {
+    background: #9FA8DA;
+}
+
+div.groupe-item:last-child {
+    margin-bottom: 0;
+}
+
+/* --- creation de groupe --- */
+
+#creer-groupe-avertissement {
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 2px solid crimson;
+    border-radius: 3px;
+    background: #f3f3f3;
+}
+
+#creer-groupe-ecole-nom {
+    background: dodgerblue;
+    color: white;
+    padding: 8px 20px 6px 20px;
+    font-size: 1.2em;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+#creer-groupe-ecole-win {
+    padding: 20px 15px 20px 15px;
+    border: 1px solid dodgerblue;
+}
+
+#creer-groupe-responsabilites {
+    padding: 15px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    background: #f3f3f3;
+    color: #666;
+}
+

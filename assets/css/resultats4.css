@@ -1,0 +1,247 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* ----------------------------------------------------------------------------
+ *
+ * KOVAO.com > Resultats
+ *
+ * version 4 (2020-06-01)
+ *
+ * ---------------------------------------------------------------------------- */
+
+/* ----------------------------------------------------------------------------
+ *
+ * Resultats > Evaluation
+ *
+ * ---------------------------------------------------------------------------- */
+
+.evaluation-cours-titre {
+    color: #444;
+}
+
+.evaluation-titre {
+    margin-top: 15px;
+    padding: 12px 15px 12px 15px;;
+    color: #fff;
+    font-family: Lato;
+    font-weight: 600;
+    font-size: 1em;
+    background: #444;
+}
+
+.resultats-groupes {
+    margin-top: 5px;
+    padding: 10px 15px 10px 15px;
+    background-color: #66BB6A;
+    color: #fff;
+    cursor: pointer;
+}
+
+.resultats-tous-groupes {
+    margin-top: 5px;
+    padding: 10px 15px 10px 15px;
+    background-color: #388E3C;
+    border-color: #388E3C;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* ----------------------------------------------------------------------------
+ *
+ * Resultats > Toutes les evaluations
+ *
+ * ---------------------------------------------------------------------------- */
+
+.resultats-cours-titre {
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 1.1em;
+    color: #fff;
+    background-color: #43A047;
+    background-color: limegreen;
+    background-color: #4CAF50;
+    padding: 10px 15px 10px 15px;
+}
+
+.resultats-cours-titre:first-child {
+    margin-top: 10px;
+}   
+
+.resultats-cours-contenu {
+    border-top: 0;
+}
+
+.resultats-cours-contenu:last-child {
+    margin-bottom: -20px;
+}
+
+a.resultats-evaluation-titre-lien {
+    text-decoration: none;
+}
+
+.resultats-evaluation-titre {
+    padding: 12px 15px 12px 15px;
+    color: #444;
+    font-family: Lato;
+    font-weight: 400;
+    font-size: 0.95em;
+    background: #f8f9fa;
+    border-bottom: 1px solid #C8E6C9;
+}
+
+.resultats-evaluation-titre:hover {
+    background: #E8F5E9;
+}
+
+
+/* ----------------------------------------------------------------------------
+ *
+ * Resultats > Evaluation > Confirmite
+ *
+ * ---------------------------------------------------------------------------- */
+
+#conformite-evaluation {
+    margin-top: 20p;
+}
+
+#conformite-evaluation-titre {
+    padding: 10px 15px 10px 15px;
+    background: #1A237E;
+    color: #fff;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+#conformite-evaluation-contenu {
+    padding: 10px 15px 10px 15px;
+    border: 1px solid #1A237E;
+    background: #f7f7f7;
+    font-size: 0.9em;
+}
+
+#conformite-evaluation-precisions {
+    margin-top: 5px;
+}
+
+.conformite-evaluation-precisions-titre {
+    margin-top: 5px;
+    padding: 10px 15px 10px 15px;
+    background: #5C6BC0;
+    color: #fff;
+    font-family: Lato;
+    font-weight: 300;
+    font-size: 0.9em;
+}
+
+.conformite-evaluation-precisions-titre.alerte {
+    background: #F57C00;
+}
+
+.conformite-evaluation-precisions-titre.alerte2 {
+    background: crimson;
+}
+.conformite-evaluation-precisions-titre.inscrits {
+    background: #7E57C2;
+}
+
+.conformite-evaluation-precisions-titre.documents {
+    background: #A1887F;
+}
+
+.conformite-evaluation-precisions-contenu {
+    padding: 10px 15px 10px 15px;
+    border: 1px solid #5C6BC0;
+    background: #f7f7f7;
+    font-size: 0.9em;
+}
+
+.conformite-evaluation-precisions-contenu.alerte {
+    border-color: #F57C00;
+}
+
+.conformite-evaluation-precisions-contenu.alerte2 {
+    border-color: crimson;
+}
+
+.conformite-evaluation-precisions-contenu.inscrits {
+    border: 1px solid #7E57C2;
+}
+
+.conformite-evaluation-precisions-contenu.documents {
+    border: 1px solid #A1887F;
+}
+
+.conformite-evaluation-precisions-table td {
+    padding: 3px 5px 3px 5px;
+
+}
+.conformite-evaluation-precisions-table td:first-child {
+    padding-left: 0;
+}
+
+.conformite-explications {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.conformite-explications i {
+    color: #1A237E;
+}
+
+.conformite-noms {
+    margin-top: 1px;
+    margin-bottom: 1px;
+    display: inline-block;
+    margin-right: 3px; 
+    background: #ddd; 
+    padding: 3px 6px 3px 6px; 
+    border-radius: 3px; 
+    font-size: 0.9em
+}
+
+/* ----------------------------------------------------------------------------
+ *
+ * Resultats > Evaluation > Les soumissions
+ *
+ * ---------------------------------------------------------------------------- */
+
+div.soumissions {
+    border: 1px solid mediumseagreen;
+}
+
+table.soumissions {
+    font-size: 0.92em;
+    margin: 0;
+}
+
+table.soumissions thead tr th {
+    padding: 12px 15px 12px 15px;
+    font-weight: 700;
+    font-family: Lato;
+    color: #444;
+    background-color: #eaeaea;
+    border-top: 0;
+    border-bottom: 1px solid mediumseagreen;
+}
+
+table.soumissions tbody tr td {
+    padding: 12px 15px 7px 15px;
+}
+
+table.soumissions tbody tr {
+    background-color: #f7f7f7;
+}
+
+table.soumissions tbody tr:hover {
+    background-color: #eee;
+}
+
+table.soumissions tfoot tr td {
+    background-color: #eaeaea;
+    border-top: 1px solid mediumseagreen;
+}
+

@@ -1,0 +1,58 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* --------------------------------------------------------------------
+ *
+ * KOVAO.com > Groupe
+ *
+ * -------------------------------------------------------------------- */
+
+.groupe-section {
+    border: 1px solid #5C6BC0;
+    border-radius: 3px;
+}
+
+.groupe-section-titre {
+    padding: 10px;
+    padding-left: 15px;
+    border-bottom: 1px solid #5C6BC0;
+    background: #5C6BC0;
+    font-family: Lato;
+    color: #fff;
+}
+
+.groupe-section-titre.autoportant {
+    border: none;
+    padding: 12px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+}
+
+.groupe-section-box {
+    padding: 20px;
+}
+
+#semestres th, #cours th, #enseignants th, #enseignants-approbation th {
+    border-top: none;
+}
+
+#enseignants i.fa-check-circle {
+    color: limegreen;
+}
+
+#enseignants i.fa-times-circle {
+    color: crimson;   
+}
+
+/* Erreurs */
+
+div.erreurs {
+    color: crimson;
+    background: gold;
+    padding: 5px 8px 5px 8px;
+    border-radius: 3px;
+}

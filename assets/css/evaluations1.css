@@ -1,0 +1,113 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* ============================================================================
+ *
+ * Evaluations CSS
+ *
+ * =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+ *
+ * Navigation pour les cours
+ *
+ * ---------------------------------------------------------------------------- */
+
+.sidebar {
+	position: -webkit-sticky;
+  	position: sticky;
+	top: 129px;
+	max-height: 80vh;
+	overflow-y: auto;
+    border: 1px solid dodgerblue;
+    font-family: Lato;
+    font-weight: 400;
+    background-color: #f7f7f7;
+}
+
+.sidebar-titre {
+    padding: 5px 5px 5px 15px;
+    color: #fff;
+    background-color: dodgerblue;
+}
+
+.sidebar a.nav-link {
+    padding-top: 3px;
+	padding-bottom: 3px;
+    color: #444;
+}
+
+.sidebar a.nav-link:hover {
+	background: lightsteelblue;
+}
+
+.sidebar li.nav-item {
+	padding: 0; 
+}
+
+a.anchor {
+    display: block;
+    position: relative;
+    top: -130px;
+    visibility: hidden;
+}
+
+/* --- sidebar: page custom --- */
+
+#evaluations .sidebar,
+#editeur-evaluation.evaluation .sidebar {
+    border-color: slateblue;
+}
+
+#evaluations .sidebar-titre,
+#editeur-evaluation.evaluation .sidebar-titre {
+    background-color: slateblue;
+}
+
+/* --- evaluations du departement ---- */
+
+a.evaluation-liste {
+    text-decoration: none;
+    color: #222;
+}
+
+div.evaluation-liste {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #0275d8;
+    border: 1px solid mediumpurple;
+    border-radius: 3px;
+    background-color: lavender;
+}
+
+div.evaluation-liste:hover {
+    cursor: pointer;
+    background-color: mediumpurple;
+    color: #fff;
+    background-color: thistle;
+    color: #000;
+}
+
+/* --- mes evaluations ---- */
+
+a.mon-evaluation-liste {
+    text-decoration: none;
+    color: #222;
+}
+
+div.mon-evaluation-liste {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #0275d8;
+    border-radius: 3px;
+    background-color: #fff;
+}
+
+div.mon-evaluation-liste:hover {
+    cursor: pointer;
+    background-color: #90caf9;
+}

@@ -1,0 +1,28 @@
+KOVAO - Système d’évaluation open source
+Copyright (C) 2018–2025 KOVAO Project
+Tous droits réservés à l’auteur original du projet KOVAO.
+
+KOVAO est un logiciel développé de manière indépendante par son auteur,
+dans le but de soutenir la communauté éducative. Il est mis à disposition
+du public sous licence libre afin d’en assurer la pérennité et l’évolution.
+
+La marque, le logo et le nom « KOVAO » sont la propriété de l’auteur original
+du projet. Les versions dérivées peuvent être distribuées sous un autre nom,
+à condition de mentionner clairement qu’elles sont « basées sur KOVAO »
+ou « dérivées de KOVAO ».
+
+Toute utilisation du nom « KOVAO » ou du logo officiel pour promouvoir une
+version modifiée comme s’il s’agissait du projet original est interdite.
+
+Les utilisateurs peuvent librement exécuter, étudier, modifier et redistribuer
+le logiciel KOVAO, à condition que toute version modifiée :
+- reste distribuée sous la même licence (AGPL-3.0) ;
+- mentionne l’origine du code KOVAO dans la documentation ou la page d’accueil ;
+- rende le code source accessible à la communauté si elle est utilisée via un service en ligne.
+
+Toute utilisation commerciale (vente, hébergement payant, intégration dans un produit
+propriétaire) nécessite une autorisation écrite du titulaire de la marque KOVAO.
+
+Le logiciel KOVAO est distribué sous la GNU Affero General Public License v3.0.
+Une copie complète de cette licence est fournie dans le fichier LICENSES/AGPL-3.0.txt
+et disponible en ligne à https://www.gnu.org/licenses/agpl-3.0.txt.

@@ -1,0 +1,193 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* -------------------------------------------------------------------
+ *
+ * votes.css
+ *
+ * -------------------------------------------------------------------- */
+
+/* --- scrutin --- */
+
+#scrutin-question {
+    font-size: 1.05em;
+    background: #C5CAE9;
+    padding: 25px 20px 25px 20px;
+    border-radius: 3px;
+    border-left: 12px solid #5C6BC0;
+}
+
+.scrutin-document {
+    padding: 10px;
+    background: #f7f7f7;
+    border-top: 1px solid #ddd;
+    border-radius: 0 0 3px 3px;
+}
+
+.scrutin-choix {
+    margin-top: 10px;
+    background: #E8EAF6;
+    border-radius: 3px;
+    padding: 10px;
+}
+
+.scrutin-choix:hover {
+    background: #9FA8DA;
+    color: #fff;
+}
+
+.surligne {
+    background: #9FA8DA;
+    color: #fff;
+}
+
+.ui-datepicker { 
+    font-family: Arial;
+    font-size: 14px !important; 
+}
+
+/* --- scrutins --- */
+
+a.scrutin-item-link {
+    color: #444;
+    text-decoration: none;
+}
+
+.scrutin-item {
+    padding: 10px;
+    padding-left: 15px;
+    border: 1px solid dodgerblue;
+    border-radius: 3px;
+    background: #f7f7f7;
+}
+
+/*
+.scrutin-item:hover {
+    background: lightsteelblue;
+}
+*/
+
+/* --- editeur --- */
+
+#editeur-scrutin  .custom-file-input ~ .custom-file-label::after {
+        content: "Choisissez un fichier";
+}
+input[type=file] {
+    display:none;
+    margin:10px;
+}
+
+.editeur-scrutin-section-titre {
+    padding: 10px 15px 10px 15px;
+    border-radius: 3px 3px 0 0;
+    background: #3949AB;
+    color: #eee;
+}
+
+.editeur-scrutin-section {
+    padding: 20px;
+    background: #f7f7f7;
+}
+
+.editeur-scrutin-section-options {
+    background: #f7f7f7;
+    border-top: 1px solid #ddd;
+    border-radius: 0 0 3px 3px;
+    padding: 10px;
+}
+
+#choix-liste {
+    border-radius: 3px 3px 0 0;
+}
+
+#choix-liste table tr:first-child {
+    border-top: 1;
+}
+#choix-liste table tr {
+    border-top: 1px solid #ddd;
+    background: #f7f7f7;
+}
+
+#choix-liste table tr:hover {
+    background: #eee;
+}
+
+#choix-liste table td {
+    padding: 7px;
+}
+
+.participants-titre {
+    font-weight: bold;
+}
+
+#participants-liste {
+    border-radius: 3px;
+}
+
+table.table {
+    padding: 0; 
+    margin: 0;
+    border-radius: 3px;
+    background: #f7f7f7;
+}
+
+tr.participant {
+    border-top: 1px solid #ddd;
+}
+
+tr.participant:first-child {
+    border-top: 0;
+}
+
+tr.participant:hover {
+    background: #eee;
+}
+
+td.participant-enseignant {
+    padding: 12px;
+}
+
+td.participant-options {
+    padding-top: 9px;
+    padding-right: 10px;
+    text-align: right;
+}
+
+#documents-liste {
+}
+
+tr.document {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+/* --- resultats --- */
+
+#scrutin-resultats-choix table {
+    border-bottom: 1px solid limegreen;
+}
+
+#scrutin-resultats-choix table td {
+    background: #E8F5E9;
+    border-top: 1px solid limegreen;
+}
+
+#scrutin-resultats-participant table {
+    border-bottom: 1px solid #B0BEC5;
+}
+
+#scrutin-resultats-participant table th {
+    background: #CFD8DC;
+    border-top: 1px solid #B0BEC5;
+    border-bottom: 1px solid #B0BEC5;
+}
+
+#scrutin-resultats-participant table td {
+    background: #ECEFF1;
+    border-top: 1px solid #B0BEC5;
+}
+

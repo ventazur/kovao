@@ -1,0 +1,57 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* --------------------------------------------------------------------
+ *
+ * KOVAO.com > Lab
+ *
+ * -------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------
+ *
+ * Evaluation
+ *
+ * -------------------------------------------------------------------- */ 
+
+.evaluation-tableau-contenu table td {
+    vertical-align: middle;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Tableaux specifiques
+ *
+ * -------------------------------------------------------------------- */ 
+
+#lab-tableaux-specifiques table td:first-child {
+    border-left: 0;
+}
+
+#lab-tableaux-specifiques table td:last-child {
+    border-right: 0;
+}
+
+#lab-tableaux-specifiques table tr:last-child td {
+    border-bottom: 0;
+}
+#lab-tableaux-specifiques table td {
+    vertical-align: middle;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Consulter > Contenu des tableaux
+ *
+ * -------------------------------------------------------------------- */ 
+
+.corriger-tableau-contenu.avec-table {
+    padding: 5px;
+}
+
+.corriger-tableau-contenu:not(.avec-table) {
+    padding: 20px;
+

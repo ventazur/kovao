@@ -1,0 +1,187 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* --------------------------------------------------------------------
+ *
+ * KOVAO.com > Administration
+ *
+ * -------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------
+ *
+ * General
+ *
+ * -------------------------------------------------------------------- */ 
+
+a.anchor {
+    display: block;
+    position: relative;
+    top: -130px;
+    visibility: hidden;
+}
+
+#sous-menu {
+    border: 1px solid dodgerblue;
+}
+
+#sous-menu a.btn {
+    padding: 8px;
+    background: #f8f9fa;
+    font-family: Lato;
+    font-weight: 300;
+    border-radius: 0;
+}
+
+#sous-menu a.btn:hover  {
+    background: #ddd;
+}
+
+#sous-menu a.btn.active {
+    background: dodgerblue;
+    color: #fff;
+}
+
+
+/* --- systeme --- */
+
+.admin-table {
+    margin: 0;
+    font-size: 0.85em;
+    border: 1px solid #ddd;
+    font-weight: 300;
+}
+.admin-table tbody tr {
+    background-color: #f7f7f7;
+}
+.admin-table tbody tr:hover {
+    background-color: #eee;
+}
+
+
+a.admin-ecole, a.admin-groupe {
+    display: block;
+    margin-top: 10px;
+    padding: 10px;
+    color: #444;
+    background: #f7f7f7;
+    border: 1px solid dodgerblue;
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 300;
+}
+
+a.admin-ecole:hover, a.admin-groupe:hover {
+    background-color: lightblue;
+}
+
+/* --- groupe --- */
+
+.groupe-section {
+    border: 1px solid #bbb;
+    border-radius: 3px;
+}
+
+.groupe-section-titre {
+    padding: 10px;
+    padding-left: 15px;
+    border-bottom: 1px solid #bbb;
+    background: #bbb;
+    font-family: Lato;
+}
+
+.groupe-section-titre.autoportant {
+    border: none;
+    padding: 12px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+}
+
+.groupe-section-box {
+    padding: 20px;
+}
+
+#semestres th, #cours th, #enseignants th {
+    border-top: none;
+}
+
+#enseignants i.fa-check-circle {
+    color: limegreen;
+}
+
+#enseignants i.fa-times-circle {
+    color: crimson;   
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Recherche
+ *
+ * -------------------------------------------------------------------- */
+
+#recherche-resultats {
+    margin-bottom: 20px;
+}
+
+#recherche-resultats-titre {
+    background: gold;
+    color: #000;
+    padding: 10px 15px 10px 15px;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+#recherche-resultats-contenu {
+}
+
+.recherche-resultats-section {
+    margin-top: 30px;
+}
+
+.recherche-resultats-section-titre {
+    background: #E3F2FD;
+    color: #fff;
+    color: dodgerblue;
+    color: #1565C0;
+    font-family: Lato;
+    font-weight: 300;
+    padding: 10px 15px 10px 15px;
+    border: 1px solid dodgerblue;
+    border-bottom: 0;
+}
+
+#recherche-resultats-aucun {
+    margin: auto;
+    margin-bottom: -10px;
+    max-width: 700px;
+    text-align: center;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+.recherche-resultats-section-contenu {
+    border: 1px solid dodgerblue;
+}
+
+.recherche-resultats-section-contenu table {
+    width: 100%;
+    margin: 0;
+    font-size: 0.85em;
+}
+
+.recherche-resultats-section-contenu table th {
+    padding: 8px 12px 8px 12px;
+    border-top: 1px solid #eee;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+.recherche-resultats-section-contenu table td {
+    padding: 8px 12px 8px 12px;
+    border-top: 1px solid #eee;
+}
+

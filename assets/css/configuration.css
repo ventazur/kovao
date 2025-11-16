@@ -1,0 +1,169 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* --------------------------------------------------------------------
+ *
+ * KOVAO.com > Configuration
+ *
+ * -------------------------------------------------------------------- */
+
+.box-section {
+    border-radius: 3px;
+}
+
+.box-section-titre {
+    padding: 10px;
+    padding-left: 15px;
+    background: #CFD8DC;
+    font-family: Lato;
+}
+
+.box-section-titre.autoportant {
+    border: none;
+    padding: 12px;
+    margin-bottom: 20px;
+}
+
+.box-section-win {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 3px;
+}
+
+.box-sous-section {
+    margin-top: 20px;
+    border: 1px solid lightsteelblue;
+}
+
+.box-sous-section-titre {
+    padding: 10px;
+    background: lightsteelblue;
+    font-family: Lato;
+    font-weight: 400;
+}
+
+.box-sous-section-win {
+    padding: 20px;
+}
+
+a.admin-ecole, a.admin-groupe {
+    display: block;
+    margin-top: 10px;
+    padding: 10px;
+    color: #444;
+    background: #f7f7f7;
+    border: 1px solid dodgerblue;
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 300;
+}
+
+a.admin-ecole:hover, a.admin-groupe:hover {
+    background-color: lightblue;
+}
+
+/* --- groupe --- */
+
+.groupe-section {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.groupe-section-titre {
+    padding: 10px;
+    padding-left: 15px;
+    border-bottom: 1px solid #ccc;
+    background: #ccc;
+    font-family: Lato;
+}
+
+.groupe-section-titre.autoportant {
+    border: none;
+    padding: 12px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+}
+
+.groupe-section-box {
+    padding: 20px;
+}
+
+#semestres th, #cours th, #enseignants th {
+    border-top: none;
+}
+
+/* ----------------------------------------------------------------------------
+ *
+ * Eleves
+ *
+ * ---------------------------------------------------------------------------- */
+
+.n-listes-etudiants { }
+
+.n-liste-etudiants-titre {
+    margin-top: 20px;
+    padding: 10px;
+    background: #5C6BC0;
+    color: #fff;
+    font-family: Lato;
+}
+
+.n-liste-etudiants {
+    border: 1px solid #5C6BC0;
+    font-size: 0.9em;
+}
+
+.n-liste-etudiants table tr {
+    background: #fff;
+}
+
+.n-liste-etudiants table th {
+    padding: 9px 10px 9px 10px;
+    background: #E8EAF6;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+.n-liste-etudiants table td {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background: #fff;
+}
+
+.n-liste-etudiants table tr:first-child td {
+    border-top: 1px solid #9FA8DA;
+}
+
+.n-liste-etudiants table tr:last-child td {
+    border-top: 1px solid #9FA8DA;
+    background: #E8EAF6;
+}
+
+.compte-trouve {
+    padding: 5px 7px 5px 7px;
+    background: #E8EAF6; 
+    border-radius: 3px; 
+    margin-right: 5px;
+    font-family: Lato;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.compte-trouve.actif {
+    background: #5C6BC0;
+    background: #444;
+    color: #eee;
+}
+
+.aucun-compte-trouve {
+    color: #999;
+    font-size: 0.95em;
+    font-family: Lato;
+    font-weight: 300;
+    
+}

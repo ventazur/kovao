@@ -1,0 +1,730 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* ============================================================================
+ *
+ * Editeur d'evaluation CSS
+ *
+ * =========================================================================== */
+ 
+/* ---------------------------------------------------------------------------
+ *
+ * Navigation
+ *
+ * ---------------------------------------------------------------------------- */
+
+/* Ceci construit sur les styles definis dans evaluations.css. */
+
+#editeur-sidebar.sidebar {
+    font-size: 0.85em
+}
+
+#editeur-sidebar div.sidebar-titre {
+    padding-right: 15px;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+div.sidebar-titre a {
+    text-decoration: none;
+    color: #fff;
+}
+
+div#editeur-menu {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    padding: 12px 12px 12px 12px;
+    background: #eceff1;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Navigation
+ *
+ * ---------------------------------------------------------------------------- */
+
+.sidebar {
+	position: -webkit-sticky;
+  	position: sticky;
+	top: 129px;
+	max-height: 80vh;
+	overflow-y: auto;
+    border: 1px solid dodgerblue;
+    font-family: Lato;
+    font-weight: 400;
+    background-color: #f7f7f7;
+}
+
+.sidebar-titre {
+    padding: 5px 5px 5px 15px;
+    color: #fff;
+    background-color: dodgerblue;
+}
+
+.sidebar a.nav-link {
+    padding-top: 3px;
+	padding-bottom: 3px;
+    color: #444;
+}
+
+.sidebar a.nav-link:hover {
+	background: lightsteelblue;
+}
+
+.sidebar li.nav-item {
+	padding: 0; 
+}
+
+a.anchor {
+    display: block;
+    position: relative;
+    top: -129px;
+    visibility: hidden;
+}
+
+/* --- sidebar: page custom --- */
+
+#evaluations .sidebar,
+#editeur-evaluation.evaluation .sidebar {
+    border-color: slateblue;
+}
+
+#evaluations .sidebar-titre,
+#editeur-evaluation.evaluation .sidebar-titre {
+    background-color: slateblue;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Evaluation
+ *
+ * ---------------------------------------------------------------------------- */
+
+/* L'en-tete */
+
+#editeur-entete {
+}
+
+#editeur-entete-titre {
+    font-size: 1.6em;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+#editeur-entete-points {
+    margin-top: -5px;
+    padding: 10px 15px 10px 15px;
+    background: gold;
+    font-size: 1.1em;
+    border-radius: 3px;
+}
+
+/* Le titre de l'evaluation dans l'en-tete. */
+
+div#evaluation-gros-titre, div#evaluation-gros-titre-groupe {
+    margin-top: 25px;
+    margin-bottom: 30px;
+    padding: 15px;
+    font-size: 1.3em;
+    color: #1565C0;
+    background-color: #E3F2FD;
+}
+
+div#evaluation-gros-titre-groupe {
+    border: 1px solid slateblue;
+    color: slateblue;
+    color: #4527A0;
+    background-color: #fff;
+    border: 1px solid #1565C0;
+}
+
+/* Importation d'une evaluation dans ses evaluations. */
+
+#editeur-importer {
+    margin-bottom: 30px;
+    border: 1px solid #BA68C8;
+}
+
+#editeur-importer-titre {
+    padding: 10px 15px 10px 15px;
+    color: #fff;
+    background: #BA68C8;
+    font-weight: 600;
+}
+
+#editeur-importer-contenu {
+    padding: 15px;
+}
+
+#editeur-importer .btn-outline-dark {
+    background-color: #fff;
+}
+#editeur-importer .btn-outline-dark:hover {
+    background-color: #222;
+}
+
+/* Exportation d'une evaluatio vers un groupe. */
+
+#editeur-exporter {
+    margin-bottom: 30px;
+    border: 1px solid #43A047;
+}
+
+#editeur-exporter-titre {
+    padding: 10px 15px 10px 15px;
+    color: #fff;
+    background: #43A047;
+    font-weight: 600;
+}
+
+#editeur-exporter-contenu {
+    padding: 15px;
+}
+
+#editeur-exporter .btn-outline-dark {
+    background-color: #fff;
+}
+#editeur-exporter .btn-outline-dark:hover {
+    background-color: #222;
+}
+
+/* Les sections */
+
+/* La marge entre les differences sections */
+.editeur-section {
+    margin-bottom: 30px;
+    border: 1px solid dodgerblue;
+}
+
+.editeur-section-titre {
+    padding: 10px 15px 10px 15px;
+    background: dodgerblue;
+    color: #fff;
+    font-weight: 600;
+}
+
+.editeur-section-contenu {
+    padding: 15px;
+}
+
+.editeur-section-sous-section-titre {
+    margin-top: 15px;
+    padding: 7px 15px 7px 15px;
+    background: #ECEFF1;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+.editeur-section-sous-section {
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #ECEFF1;
+}
+
+.editeur-section-sous-section li {
+    margin-left: 15px;
+    padding-left: 5px;
+}
+
+/* L'evaluation */
+
+#editeur-evaluation-contenu {
+}
+
+#editeur-evaluation-activation {
+    margin-bottom: 15px;
+    padding: 15px;
+}
+
+#editeur-evaluation-activation .btn-outline-primary {
+    background: #fff;
+}
+
+#editeur-evaluation-activation .btn-outline-primary:hover {
+    background: dodgerblue;
+}
+
+#editeur-evaluation-activation .btn-outline-info {
+    background: #fff;
+}
+
+#editeur-evaluation-activation .btn-outline-info:hover {
+    background-color: #17a2b8;
+}
+
+#editeur-evaluation-activation .btn-outline-warning {
+    background: #fff;
+}
+
+#editeur-evaluation-activation .btn-outline-warning:hover {
+    background-color: #ffc107;
+}
+
+#titre-evaluation-original {
+    background-color: #E3F2FD;
+}
+
+/*
+div#titre-evaluation, div#instructions-evaluation {
+    margin-top: 20px;
+}
+
+div.titre-evaluation, div#instructions-evaluation {
+    margin-top: -5px;
+    padding: 30px 40px 40px 40px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+}
+*/
+
+/* Les options */
+
+div #cadenas {
+    margin-bottom: 15px;
+    padding: 20px;
+    color: crimson;
+    background: gold;
+}
+
+div#info-evaluation {
+    margin-top: -5px;
+}
+
+div#info-evaluation .row:first-child {
+    border-radius: 3px 3px 0 0;
+}
+
+div#info-evaluation .row:last-child {
+    border-bottom: 1px solid #aaa;
+    border-radius: 0 0 3px 3px;
+}
+
+div#info-evaluation .row {
+    padding: 10px;
+    border: 1px solid #aaa;
+    border-bottom: none;
+}
+
+/* La description */
+
+#editeur-evaluation-description {
+}
+
+#editeur-evaluation-description-contenu {
+    padding: 15px;
+    background: #FFF59D;
+}
+
+#editeur-evaluation-description-contenu.description-vide {
+    background: inherit;
+    border: 1px solid #ECEFF1;
+    font-family; Lato;
+    font-weight: 300;
+    color: #aaa;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Variables
+ *
+ * ---------------------------------------------------------------------------- */
+
+#editeur-variables {
+    border: 1px solid #E64A19;
+}
+
+#editeur-variables-titre {
+    background: #E64A19;
+}
+
+#editeur-variables-contenu {
+    padding: 15px;
+}
+
+.variable {
+    margin-bottom: 10px;
+    padding: 7px 10px 7px 7px;
+    background-color: #FBE9E7;
+    border: 1px solid #FBE9E7;
+}
+
+.variable table {
+    width: 100%;
+}
+
+.variable table td {
+    height: 50px;
+}
+
+.variable .btn-outline-primary {
+    background: #fff;
+}
+
+.variable .btn-outline-primary:hover {
+    background: dodgerblue;
+}
+
+.variable-label-text {
+    color: crimson;
+    padding: 3px 6px 3px 6px;
+    font-weight: bold;
+}
+
+#tester-variables-box {
+    margin-top: 15px;
+    background: #f8f9fa;
+}
+
+#tester-variables-box-titre {
+    background: #eee;
+    padding: 8px 12px 8px 12px;
+    color: #555;
+    font-family: Lato;
+    font-weight: 300;
+}   
+
+#tester-variables-box-table {
+    margin-top: -5px;
+    padding: 15px;
+}
+
+#tester-variables-box-table table {
+}
+
+#tester-variables-box-table td {
+    padding-top: 5px;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Blocs
+ *
+ * ---------------------------------------------------------------------------- */
+
+#editeur-blocs {
+    border: 1px solid #222;
+}
+
+#editeur-blocs-titre {
+    background: #222;
+}
+
+#editeur-blocs-contenu {
+    padding: 15px;
+}
+
+.bloc {
+    margin-bottom: 10px;
+    padding: 7px 10px 7px 7px;
+    background-color: #eee;
+    border: 1px solid #eee;
+}
+
+.bloc table {
+    width: 100%;
+}
+
+.bloc table td {
+    height: 50px;
+}
+
+.bloc .btn-outline-primary {
+    background: #fff;
+}
+
+.bloc .btn-outline-primary:hover {
+    background: dodgerblue;
+}
+
+.bloc-label-text {
+    color: orange;
+    background-color: #222;
+    border-radius: 3px;
+    padding: 3px 6px 3px 6px;
+    font-weight: bold;
+}
+
+.bloc-label-text-sm {
+    margin-left: 3px;
+    color: orange;
+    background-color: #222;
+    border-radius: 3px;
+    padding: 1px 4px 2px 4px;
+    font-weight: bold;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Instructions
+ *
+ * ---------------------------------------------------------------------------- */
+
+#editeur-instructions {
+    border: 1px solid #FBC02D;
+}
+
+#editeur-instructions-titre {
+    background: #FBC02D;
+}
+
+#instructions-evaluation {
+    padding: 15px;
+}
+
+#instructions-evaluation-contenu {
+    margin-top: 10px; 
+    margin-bottom: 10px; 
+    padding: 15px;
+    background: #FFEB3B;
+    background: #FFF59D;
+}
+
+#instructions-evaluation-contenu.empty {
+    background: #eee;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Tableau
+ *
+ * ---------------------------------------------------------------------------- */
+
+.editeur-tableau {
+    border: 1px solid #4DB6AC;
+}
+
+.editeur-tableau-titre {
+    background: #4DB6AC;
+}
+
+.editeur-tableau-contenu {
+    padding: 0 15px 15px 15px;
+}
+
+.tableau-evaluation-contenu.empty {
+    background: #eee;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Tableaux - Valeurs
+ *
+ * ---------------------------------------------------------------------------- */
+
+#editeur-tableaux {
+    border: 1px solid #00695C;
+}
+
+#editeur-tableaux-titre {
+    background: #00695C;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Tableaux - Champs (points)
+ *
+ * -------------------------------------------------------------------- */
+
+#editeur-tableaux-points {
+    border: 1px solid #283593;
+}
+
+#editeur-tableaux-points .editeur-tableau-titre {
+    background: #283593;
+}
+
+#editeur-tableaux-points table td {
+    vertical-align: middle;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Tableaux - Parametres
+ *
+ * -------------------------------------------------------------------- */
+
+#editeur-tableaux-parametres {
+    border: 1px solid dodgerblue;
+}
+
+#editeur-tableaux-parametres .editeur-tableau-titre {
+    background: #283593;
+}
+
+#editeur-tableaux-parametres table td {
+    vertical-align: middle;
+}
+
+.tag-champ {
+    font-size: 0.7em; 
+    background: #F3E5F5;
+    color: #7B1FA2; 
+    border-radius: 3px; 
+    padding: 5px 7px 5px 7px; 
+    margin-left: 5px;
+}
+
+.tag-champ.gros {
+    font-size: 0.9em;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Discussion
+ *
+ * ---------------------------------------------------------------------------- */
+
+#editeur-discussion {
+    border: 1px solid #444;
+}
+
+#editeur-discussion-titre {
+    background: #444;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Questions
+ *
+ * ---------------------------------------------------------------------------- */
+
+.editeur-question-section {
+    margin-bottom: 15px;
+    border: 1px solid #90A4AE;
+}
+
+.editeur-question-section-titre {
+    padding: 10px 15px 10px 15px;
+    color: #fff;
+    background: #90A4AE;
+    font-weight: 600;
+}
+
+div.editeur-question-section-contenu {
+    padding: 15px;
+    border-top: 0;
+}
+
+div.editeur-question-section-contenu .btn-outline-primary {
+    background: #fff;
+}
+
+div.editeur-question-section-contenu .btn-outline-primary:hover {
+    background: dodgerblue;
+}
+
+.editeur-question-sous-section-titre {
+    color: #0D47A1;
+    background: #f8f9fa;
+    border: 1px solid #ECEFF1;
+    font-weight: 300;
+}
+
+.editeur-question-sous-section {
+    border: 1px solid #ECEFF1;
+    border-top: 0;
+}
+
+
+div.editeur-question {
+    padding: 30px 40px 30px 40px;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Reponses
+ *
+ * ---------------------------------------------------------------------------- */
+
+.reponses {
+    padding-top: 5px;
+}
+
+.reponses-table-wrap {
+    margin-top: 10px;
+    border: 1px solid #E8EAF6;
+    background: #E8EAF6;
+}
+
+.reponses-table {
+    width: 100%;
+
+}
+.reponses-table td {
+    padding: 5px;
+    height: 40px;
+}
+
+.selection-active {
+    background: #C5CAE9;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Tolerances
+ *
+ * ---------------------------------------------------------------------------- */
+
+.tolerances table tr:hover {
+    background: #eee;
+}
+
+/* ---------------------------------------------------------------------------
+ *
+ * Grilles de correction
+ *
+ * ---------------------------------------------------------------------------- */
+
+/*
+.grille-table {
+    margin-top: 5px;
+    padding: 7px 10px 7px 7px;
+    background: #EFEBE9;
+}
+
+.grille-table:first-child {
+    margin-top: 0px;
+}
+
+.grille-table table {
+    width: 100%;
+}
+
+.grille-table tr.element-contenu {
+}
+
+.grille-table table td {
+    height: 40px;
+}
+*/
+
+.grille-table2 {
+}
+
+.grille-table2 tr:first-child td {
+}
+
+.grille-table2 td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.grille-table2 td:first-child {
+    padding-left: 10px;
+}
+
+.grille-table2 td:last-child {
+    padding-right: 5px;
+}
+
+.grille-table2 tr:last-child td {
+    
+}
+
+.grille-table2 tr:hover {
+    background: #E8EAF6;
+}

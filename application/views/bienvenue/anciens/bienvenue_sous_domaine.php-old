@@ -1,0 +1,102 @@
+<div id="bienvenue" data-groupe_id="1">
+<div class="container">
+
+    <div id="semestre-data" class="d-none" data-semestre_id="<?= $this->semestre_id; ?>"></div>
+
+    <h4>Choisissez votre évaluation :</h4>
+
+    <div class="tspace"></div>
+
+    <form>
+
+		<? 
+		/* ---------------------------------------------------------------
+		 * 
+         * Quel cours ?
+		 *
+         * --------------------------------------------------------------- */ ?>
+
+        <? if (empty($cours_ids)) : ?>
+
+            <i class="fa fa-exclamation-circle" style="color: crimson"></i> Aucune évaluation trouvée
+
+        <? else : ?>
+
+            <div id="choisir-cours">
+
+                <div class="form-group">
+                    <label><i class="fa fa-angle-right"></i> Quel cours?</label>
+                    <select id="choisir-cours-select" class="form-control">
+                        <option value="0"></option>
+                        <? foreach($cours_ids as $cours_id) : ?>
+                            <option value="<?= $cours_id; ?>">
+                                <?= $cours_raw[$cours_id]['cours_nom_court'] . ' (' . $cours_raw[$cours_id]['cours_code'] . ')'; ?>
+                            </option>
+                        <? endforeach; ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="space"></div>
+
+        <? endif; ?>
+
+        <i id="choisir-cours-spinner" class="fa fa-spin fa-lg fa-circle-o-notch d-none" style="color: dodgerblue"></i>
+
+		<? 
+		/* ---------------------------------------------------------------
+		 * 
+         * Quel enseignant ?
+		 *
+         * --------------------------------------------------------------- */ ?>
+
+		<div id="choisir-enseignant" class="d-none">
+
+			<div class="form-group">
+				<label><i class="fa fa-angle-right"></i> Quel enseignant?</label>
+				<select id="choisir-enseignant-select" class="form-control">
+				</select>
+			</div>
+
+			<div class="space"></div>
+
+		</div>
+
+        <i id="choisir-enseignant-spinner" class="fa fa-spin fa-lg fa-circle-o-notch d-none" style="color: dodgerblue"></i>
+
+		<? 
+		/* ---------------------------------------------------------------
+		 * 
+         * Quelle evaluation ?
+		 *
+         * --------------------------------------------------------------- */ ?>
+
+		<div id="choisir-evaluation" class="d-none">
+
+			<div class="form-group">
+				<label><i class="fa fa-angle-right"></i> Quelle évaluation?</label>
+				<select id="choisir-evaluation-select" class="form-control">
+				</select>
+			</div>
+
+			<div class="tspace"></div>
+
+		</div>
+
+		<? 
+		/* ---------------------------------------------------------------
+		 * 
+         * Aller a l'evaluation
+		 *
+         * --------------------------------------------------------------- */ ?>
+
+        <div id="aller-evaluation" class="btn btn-primary d-none spinnable">
+            Aller à l'évaluation
+            <i class="fa fa-circle-o-notch fa-spin spinner d-none" style="margin-left: 5px"></i>
+        </div>
+
+    </form>
+
+</div> <!-- .container -->
+</div> <!-- #bienvenue -->

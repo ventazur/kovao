@@ -1,0 +1,179 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* ----------------------------------------------------------------------------
+ *
+ * KOVAO.com > Resultats
+ *
+ * version 2
+ *
+ * ---------------------------------------------------------------------------- */
+
+/* --- resultats --- */
+
+/* --- sidebar --- */
+
+.sidebar {
+	position: -webkit-sticky;
+  	position: sticky;
+	top: 130px;
+	max-height: 80vh;
+	overflow-y: auto;
+}
+
+.sidebar a.nav-link {
+    padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+.sidebar a.nav-link:hover {
+	background: lightsteelblue;
+}
+
+.sidebar li.nav-item {
+	padding: 0; 
+}
+
+a.anchor {
+    display: block;
+    position: relative;
+    top: -125px;
+    visibility: hidden;
+}
+
+tr.soumissions-liste-toggle {
+    background-color: #eee
+    cursor: pointer;
+}
+tr.soumissions-liste-toggle:hover {
+    background-color: #ddd;
+}
+
+/* --- resulats2 --- */
+
+.tri-nom-button,
+.tri-remise-button,
+.tri-resultat-button {
+    /* visibility: hidden; */
+    cursor: pointer;
+}
+
+.resultats-cours-titre {
+    margin-top: 20px;
+    font-size: 1.6em;
+    color: darkgreen;
+    color: #fff;
+    background-color: seagreen;
+    background-color: limegreen;
+    padding: 12px 15px 7px 15px;
+    border-radius: 3px;
+    text-shadow: 0px 0px 7px rgba(0, 0, 0, 0.50);
+}
+.resultats-cours-titre:hover {
+    background-color: forestgreen;
+    cursor: pointer;
+}
+
+.resultats-cours-titre-barre {
+    /*
+    height: 18px;
+    background-color: mediumseagreen;
+    border-radius: 3px;
+    */
+}
+
+.resultats-cours-titre:first-child {
+    margin-top: 10px;
+}   
+
+.resultats-cours-contenu {
+    margin-bottom: 40px;
+}
+
+.resultats-cours-contenu:last-child {
+    margin-bottom: -10px;
+}
+
+.resultats-evaluation-titre {
+    margin-top: 15px;
+    padding: 10px 15px 10px 15px;;
+    border-radius: 3px 3px 3px 3px;
+    background-color: #555;
+    color: #fff;
+}
+
+.resultats-evaluation-contenu {
+    /*
+    border: 1px solid #555;
+    border-top: 0;
+    border-radius: 0 0 3px 3px;
+    padding: 5px 10px 10px 10px;
+    */
+}
+
+.resultats-groupes {
+    margin-top: 5px;
+    padding: 10px 15px 10px 15px;
+    border: 1px solid #bbb;
+    background-color: #f7f7f7;
+    border-radius: 3px;
+}
+
+.resultats-groupes:hover {
+    background-color: mediumseagreen;
+    border: 1px solid mediumseagreen;
+    color: #fff;
+    cursor: pointer;
+}
+
+.resultats-groupes.expanded {
+    color: #fff;
+    border-color: mediumseagreen;
+    background-color: mediumseagreen;
+    border-radius: 0px;
+}
+.resultats-groupes.expanded:hover {
+    color: #fff;
+    border-color: forestgreen;
+    background-color: forestgreen;
+}
+
+div.soumissions {
+    border: 1px solid mediumseagreen;
+}
+
+table.soumissions {
+    font-size: 0.92em;
+    margin: 0;
+}
+
+table.soumissions thead tr th {
+    padding: 10px 15px 10px 15px;
+    font-weight: 700;
+    font-family: Lato;
+    color: #444;
+    background-color: #eaeaea;
+    border-top: 0;
+    border-bottom: 1px solid mediumseagreen;
+}
+
+table.soumissions tbody tr td {
+    padding: 12px 15px 7px 15px;
+}
+
+table.soumissions tbody tr {
+    background-color: #f7f7f7;
+}
+
+table.soumissions tbody tr:hover {
+    background-color: #eee;
+}
+
+table.soumissions tfoot tr td {
+    background-color: #eaeaea;
+    border-top: 1px solid mediumseagreen;
+}

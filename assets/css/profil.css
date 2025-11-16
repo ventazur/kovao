@@ -1,0 +1,81 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* ----------------------------------------------------------------------------
+ *
+ * KOVAO.com > Profil.css
+ *
+ * ----------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------
+ *
+ * Menu
+ *
+ * -------------------------------------------------------------------- */
+
+#profil-menu {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    font-family: Lato;
+    font-weight: 300;
+    text-align: center;
+    background: #f8f9fa;
+    border: 1px solid dodgerblue;
+}
+
+#profil-menu a {
+    padding: 8px;
+    color: #444;
+    text-decoration: none;
+}
+
+#profil-menu a.actif {
+    background: dodgerblue;
+    color: #fff;
+}
+
+#profil-menu a.actif:hover {
+    background: dodgerblue;
+}
+
+#profil-menu a:hover {
+    background: #BBDEFB;
+}
+
+/* --------------------------------------------------------------------
+ *
+ * Contenu
+ *
+ * -------------------------------------------------------------------- */
+
+#profil-contenu-titre {
+    padding: 8px 20px 8px 20px;
+    background: #ECEFF1;
+    background: #90A4AE;
+    border: 1px solid #90A4AE;
+    color: #fff;
+    font-size: 1.2em;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+#profil-contenu {
+    margin-bottom: -10px;
+    background: #f8f9fa;
+    padding: 20px;
+    border: 1px solid #90A4AE;
+}
+
+.profil-explication-parametre {
+    font-size: 0.9em;
+    color: #444;
+}
+
+#profil-contenu-fin {
+    margin-top: 35px;
+}
+

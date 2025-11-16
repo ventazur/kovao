@@ -1,0 +1,274 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* --------------------------------------------------------------------
+ *
+ * KOVAO.com > Bienvenue (Enseignants)
+ *
+ * -------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------
+ *
+ * Recherche
+ *
+ * -------------------------------------------------------------------- */
+
+#bienvenue-recherche {
+    max-width: 700px;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+#bienvenue-recherche input {
+    border: 1px solid dodgerblue;
+    height: 45px;
+    padding-left: 20px;
+    font-family: Lato;
+    font-weight: 300;
+    color: #0D47A1;
+    border-radius: 25px 0 0 25px;
+}
+
+#bienvenue-recherche input:focus {
+    /* background: #E3F2FD; */
+}
+
+#bienvenue-recherche input::placeholder {
+    color: #42A5F5;
+}
+
+#bienvenue-recherche .input-group-text {
+    padding-left: 20px;
+    padding-right: 25px;
+    background: dodgerblue;
+    color: #fff;
+    border: 1px solid dodgerblue;
+    font-size: 1.2em;
+    border-radius: 0 25px 25px 0;
+}
+
+#recherche-resultats {
+    margin-bottom: 20px;
+}
+
+#recherche-resultats-titre {
+    background: gold;
+    color: #000;
+    padding: 10px 15px 10px 15px;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+#recherche-resultats-contenu {
+}
+
+.recherche-resultats-section {
+    margin-top: 30px;
+}
+
+.recherche-resultats-section-titre {
+    background: #E3F2FD;
+    color: #fff;
+    color: dodgerblue;
+    color: #1565C0;
+    font-family: Lato;
+    font-weight: 300;
+    padding: 10px 15px 10px 15px;
+    border: 1px solid dodgerblue;
+    border-bottom: 0;
+}
+
+#recherche-resultats-aucun {
+    margin: auto;
+    margin-bottom: -10px;
+    max-width: 700px;
+    text-align: center;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+.recherche-resultats-section-contenu {
+    border: 1px solid dodgerblue;
+}
+
+.recherche-resultats-section-contenu table {
+    width: 100%;
+    margin: 0;
+    font-size: 0.85em;
+}
+
+.recherche-resultats-section-contenu table th {
+    padding: 8px 12px 8px 12px;
+    border-top: 1px solid #eee;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+.recherche-resultats-section-contenu table td {
+    padding: 8px 12px 8px 12px;
+    border-top: 1px solid #eee;
+}
+
+
+/* --------------------------------------------------------------------
+ *
+ * Autres
+ *
+ * -------------------------------------------------------------------- */
+
+h5 {
+    font-weight: 300;
+}
+
+.badge {
+    font-weight: 300;
+    border-radius: 3px;
+}   
+
+
+a.box-link {
+    text-decoration: none;
+    color: #222;
+}
+
+div.box-link {
+    padding: 5px 15px 5px 15px;
+}
+
+div.box-link:hover {
+    cursor: pointer;   
+    background-color: lightblue;
+}
+
+#box-config {
+    border-color: dodgerblue;
+}
+
+#box-resultats, #box-corrections, #box-evaluations {
+    border: 1px solid #f3f3f3;
+    background: #f3f3f3;
+}
+
+#box-resultats:hover {
+    border: 1px solid limegreen;
+    background: limegreen;
+}
+
+#box-corrections:hover {
+    border: 1px solid gold;
+    background: gold;
+}
+
+#box-evaluations:hover {
+    border: 1px solid skyblue;
+    background: skyblue;
+}
+
+@media (max-width: 4096px) {
+    #bienvenue .activite table {
+        font-size: 0.95em;
+    }
+}
+
+@media (max-width: 1800px) {
+    #bienvenue .activite table {
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 1080px) {
+    #bienvenue .activite table {
+        font-size: 0.8em;
+    }
+}
+
+@media (max-width: 800px) {
+    #bienvenue .activite table {
+        font-size: 0.7em;
+    }
+}
+
+.bienvenue-aucune {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.bienvenue-fermee {
+    font-family: Lato;
+    font-weight: 400;
+    color: #aaa;
+    border-bottom: 1px solid dodgerblue;
+    padding-bottom: 10px;
+}
+
+.bienvenue-table-box {
+    border: 1px solid dodgerblue;
+}
+
+.bienvenue-table-box-noborder { }
+
+.bienvenue-table {
+    width: 100%;
+    /* font-weight: 300; */
+}
+
+.bienvenue-table-titre {
+    background: dodgerblue;
+    color: #fff;
+}
+
+.bienvenue-table th {
+    padding: 10px 15px 10px 15px;
+    border-bottom: 1px solid dodgerblue;
+    font-family: Lato;
+}
+
+.bienvenue-table-titre {
+    background: dodgerblue;
+}
+
+.bienvenue-table-titre th {
+    font-weight: 400;
+}
+
+.bienvenue-table-entete th {
+    font-weight: 300;
+    background: #fff;
+}
+
+.bienvenue-table tr {    
+    background-color: #f7f7f7;
+}
+
+.bienvenue-table td {    
+    padding: 10px 15px 10px 15px;
+}
+
+.bienvenue-table tr.ajd td {
+    background-color: #E3F2FD;
+}
+
+.bienvenue-table tbody tr {
+    border-top: 1px solid #ddd;
+}
+
+.bienvenue-table tbody tr:first-child {
+    border-top: 0;
+}
+
+.bienvenue-table-box-noborder .bienvenue-table tbody tr:last-child {
+    border-bottom: 1px solid dodgerblue;
+}
+
+.copier-lien-clipboard {
+    color: #777;
+}
+
+.copier-lien-clipboard:hover {
+    color: dodgerblue;
+}

@@ -1,0 +1,71 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* --------------------------------------------------------------------
+ *
+ * bienvenue.css
+ *
+ * -------------------------------------------------------------------- */
+
+#bienvenue-www h3, #bienvenue-www h4, #bienvenue-www h5 {
+    font-family: Lato;
+    color: #0D47A1;
+}
+
+.evaluations-en-cours table, 
+.suggestions table
+{
+    line-height: 36px;
+    border: 1px solid dodgerblue;
+    font-family: Lato;
+    font-size: 0.9em;
+}
+
+.evaluations-en-cours table tbody tr:first-child,
+.suggestions table tbody tr:first-child
+{
+   background: #fff;
+   font-weight: 300;
+   border-top: inherit;
+}
+
+.evaluations-en-cours table tbody tr,
+.suggestions table tbody tr
+{
+    border-top: 1px solid #ddd;
+    background: #f3f3f3;
+}
+
+#vers-evaluation-query {
+    padding: 24px 20px 24px 20px; 
+    border-color: dodgerblue; 
+    font-size: 1.2em; 
+    color: #0D47A1
+}
+
+#vers-evaluation {
+    background: dodgerblue;
+    border-color: dodgerblue;
+}
+
+#vers-evaluation:hover {
+    background: #1976D2;
+    border-color: #1976D2;
+}
+
+#inscrivez-vous {
+    color: #fff;
+    background: dodgerblue;
+    border: 1px solid dodgerblue;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+#inscrivez-vous:hover {
+    background: #1976D2;
+    border-color: #1976D2;
+}

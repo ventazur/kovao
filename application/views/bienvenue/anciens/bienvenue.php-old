@@ -1,0 +1,69 @@
+<div id="bienvenue-www">
+<div class="container-fluid">
+
+<div class="row">
+
+<div class="d-none d-xl-block col-xl-1"></div>
+<div class="col-sm-12 col-xl-10">
+
+    <div>
+    
+        <?= form_open('', array(), array()); ?>
+            
+            <div class="form-row">
+
+                <div class="col-sm-2 col-lg-3 col-xl-3"></div>
+
+                <div class="col-sm-8 col-lg-6 col-xl-6">
+
+                    <div class="space"></div>
+
+                    <div class="input-group mb-2" style="margin-left: 5px">
+                        <input id="vers-evaluation-query" name="vers-evaluation-query" type="text" class="form-control" 
+                            placeholder="Référence de l'évaluation (6 lettres)" style="border-color: dodgerblue; padding: 22px 15px 22px 15px">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="vers-evaluation" style="padding-left: 20px; padding-right: 20px; border-color: dodgerblue; background-color: dodgerblue; cursor: pointer">
+                                <i class="fa fa-search" style="color: #fff"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div id="vers-evaluation-helper" class="d-none" style="font-family: Lato; font-weight: 300; font-size: 0.9em; margin-left: 10px; color: crimson;">
+                        <i class="fa fa-exclamation-circle" style="margin-right: 5px"></i>
+                        <span id="vers-evaluation-helper-msg"></span>
+                    <div>
+                </div>
+
+                <div class="col-sm-2 col-lg-3 col-xl-3"></div>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col d-none">
+            Vous êtes nouveau, nouvelle ? Veuillez débuter en <a href="<?= base_url() . 'inscription'; ?>">créant votre compte</a>.
+        </div>
+
+    </div>
+
+    <div class="row d-none">
+        <div class="col">
+            Étudiants
+
+        </div>
+
+        <div class="col">
+            Enseignants
+
+        </div>
+    </div>
+
+</div> <!-- .col-sm-12 col-xl-10 -->
+<div class="d-none d-xl-block col-xl-1"></div>
+
+</div> <!-- .row -->
+
+</div> <!-- .container-fluid -->
+</div> <!-- #bienvenue -->

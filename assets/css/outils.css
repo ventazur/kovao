@@ -1,0 +1,81 @@
+/*!
+ * KOVAO - Open-source evaluation project
+ * (c) 2018–2025 KOVAO Project – AGPL-3.0
+ * FR : Forks autorisés sous autre nom, attribution à KOVAO requise.
+ * EN : Forks allowed under another name, attribution to KOVAO required.
+ */
+
+/* ----------------------------------------------------------------------------
+ *
+ * KOVOA > outils.css
+ *
+ * ---------------------------------------------------------------------------- */
+
+#outil-fenetre {
+    padding: 15px 20px 15px 20px;
+    border: 1px solid #ccc;
+    background: #f7f7f7;
+}
+
+#outil-fenetre-titre {
+    margin-top: 25px;
+    padding: 10px 15px 10px 15px;
+    color: #fff;
+    background: #333;
+    border: 1px solid #333;
+    font-family: Lato;
+    font-weight: 300;
+}
+
+#question-texte-titre,
+#variables-titre,
+#equation-titre,
+#reponses-titre,
+#reponses-hypothetiques-titre,
+#tolerances-titre,
+#similarite-titre,
+#pointage-titre {
+    font-weight: 600;
+}
+
+#question-texte {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* ----------------------------------------------------------------------------
+ *
+ * Question a reponse numerique par equation (TYPE 7)
+ *
+ * ---------------------------------------------------------------------------- */
+
+#reponses tr td {
+    padding-top: 10px;
+}
+
+#reponses tr:first-child td {
+    padding-top: 0;
+}
+
+#similarite-calculee-wrap, #similarite-suggeree-wrap {
+}
+
+/* ----------------------------------------------------------------------------
+ *
+ * Question a reponse numerique par equation (TYPE 9)
+ *
+ * ---------------------------------------------------------------------------- */
+
+#outils-question-type-9 {
+
+
+}
+
+#tolerances table tr.tolerance td {
+    padding-top: 10px;
+}
+
+#tolerances table tr.tolerance:first-child td {
+    padding-top: 0;
+}
