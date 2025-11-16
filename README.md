@@ -1,8 +1,9 @@
 # KOVAO
 
-**KOVAO** est une plateforme d’évaluation open source créé en 2018. Développée à l’origine pour répondre aux besoins du niveau collégial au Québec, KOVAO privilégie la simplicité et peut être utilisée dans une grande variété de contextes pédagogiques.
+**KOVAO** est une plateforme d’évaluation des apprentissages créée en 2018. Développée à l’origine pour répondre aux besoins du niveau collégial du Québec, KOVAO privilégie la simplicité et peut être utilisée dans une grande variété de contextes pédagogiques.
 
 ---
+
 ## Objectif
 
 KOVAO vise à offrir un environnement d’évaluation :
@@ -15,15 +16,19 @@ Toute personne ou institution peut l’utiliser et y contribuer librement,
 dans le respect de la licence AGPL-3.0 et des conditions d’attribution.
 
 ---
+
 ## Notes
+
 #### Politique de confidentialité
 
 Le minimum de renseignements personnels est requis pour assurer le fonctionnement du processus d’évaluation. 
+
 #### Déclaration de non responsabilité
 
 Cette plateforme est fournie “tel quel”, sans garantie d’exactitude, de disponibilité ou de performance.  Les auteurs déclinent toute responsabilité pour toute erreur, perte de données ou conséquence découlant de son utilisation.  L’utilisateur assume l’entière responsabilité de l’usage qu’il fait de la plateforme.
 
 ---
+
 ## Prérequis
 
 - PHP >= 8.0
@@ -33,6 +38,7 @@ KOVAO a été développé avec le framework CodeIgniter 3.1.13. Il utilise égal
 Afin d'améliorer les performances, il utilise une mise en cache avec Redis. Ceci pourrait être remplacé par des fichiers sur un disque rapide.
 
 ---
+
 ## Installation
 
 ```bash
@@ -64,6 +70,7 @@ vi application/config/config_site.php
 ```
 
 ---
+
 ## Fonctionnement
 
 KOVAO est configuré de façon à rouler seulement en https.
@@ -71,7 +78,9 @@ KOVAO est configuré de façon à rouler seulement en https.
 Un manuel d'utilisation sommaire est disponible à cette adresse : [Manuel d'utilisation](https://docs.google.com/document/d/1gB2gdlvXzuszN6C3DhrJeLHWjMCv6p_3ZcliIVWIFuU/edit?tab=t.0)
 
 En 2024, les laboratoires ont été ajoutés en complément des évaluations.  
-Comme aucun éditeur graphique n’est disponible pour créer les vues de laboratoires, celles-ci doivent être développées directement en HTML en utilisant les balises PHP des helpers. Plusieurs exemples fonctionnels ainsi que des gabarits sont fournis dans le répertoire :  
+Comme aucun éditeur graphique n'est disponible pour créer les vues de laboratoires, celles-ci doivent être développées directement en HTML en utilisant les balises PHP des helpers. Plusieurs exemples fonctionnels ainsi que des gabarits sont fournis dans le répertoire :  
 `/application/views/laboratoire`
 
 De 2018 à 2021, il était possible de répondre à une évaluation sans créer de compte. Cette fonctionnalité a depuis été retirée, mais il est possible que certains fragments de code liés à cet ancien mode de fonctionnement soient encore présents.
+
+KOVAO peut utiliser le disque pour stocker les documents des évaluations et des soumissions, mais il est présentement configuré pour les stocker dans un conteneur S3 sur Amazon AWS.
