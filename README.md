@@ -54,19 +54,28 @@ apt install ghostscript php8.1-intl php8.1-fpm php8.1-mysql php8.1-xml php8.1-bc
 
 (Vérifier la liste des extensions PHP dans INSTALL_php_extensions.txt si nécessaire)
 
-# 3. Créer la structure de la base de données
+# 4. Modifier la configuration de PHP pour permettre le téléversement de fichiers plus volumineux
+vim /etc/php/8.1/fpm/php.ini
+
+Ajouter / modifier ces valeurs :
+file_uploads = On
+upload_max_filesize = 50M
+max_file_uploads = 20
+
+# 5. Créer la structure de la base de données
 INSTALL_database_creation_aaaammjj.sql
 INSTALL_database_table_enseignants_aaammjj.sql (le compte admin par défaut)
 INSTALL_database_table_parametres_aaaammjj.sql (les paramètres de base par défaut)
 
-# 4. Créer les répertoires pour le storage des documents
+# 6. Créer les répertoires pour le storage des documents
 mkdir storage
 mkdir storage_s
 
-# 5. Configurer
+# 7. Configurer
 vi application/config/database.php
 vi application/config/config.php
 vi application/config/config_site.php
+
 ```
 
 ---
