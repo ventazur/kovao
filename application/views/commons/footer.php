@@ -32,7 +32,11 @@
                             <i class="fa fa-question-circle" style="margin-right: 5px;"></i><strong>Manuel d'utilisation</strong>
                         </a>
                     </div>
-                <? endif; ?>
+				<? endif; ?>
+
+				<div class="mt-2">
+					<i class="bi bi-github"></i> <a href="https://github.com/ventazur/kovao" target="_blank" style="font-weight: 400; color: #444">GitHub</a>
+				</div>
 
             </div>
 

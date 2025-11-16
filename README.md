@@ -30,6 +30,7 @@ Cette plateforme est fournie “tel quel”, sans garantie d’exactitude, de di
 - MySQL >= 8.0
 
 KOVAO a été développé avec le framework CodeIgniter 3.1.13. Il utilise également le Javascript pour le rendu dynamique avec la bibliothèque jQuery 3.5. Finalement, le design a été construit autour de la bibliothèque Bootstrap 4.
+Afin d'améliorer les performances, il utilise une mise en cache avec Redis. Ceci pourrait être remplacé par des fichiers sur un disque rapide.
 
 ---
 ## Installation
@@ -52,7 +53,11 @@ INSTALL_database_creation_aaaammjj.sql
 INSTALL_database_table_enseignants_aaammjj.sql (le compte admin par défaut)
 INSTALL_database_table_parametres_aaaammjj.sql (les paramètres de base par défaut)
 
-# 4. Configurer
+# 4. Créer les répertoires pour le storage des documents
+mkdir storage
+mkdir storage_s
+
+# 5. Configurer
 vi application/config/database.php
 vi application/config/config.php
 vi application/config/config_site.php
