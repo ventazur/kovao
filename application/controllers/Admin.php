@@ -1042,34 +1042,75 @@ class Admin extends MY_Controller
 
     /* ------------------------------------------------------------------------
      *
-     * Voir traces
+	 * Voir traces
+	 *
+	 * ------------------------------------------------------------------------
+	 *
+	 * avec les trace_id (de la base de donnees) 2025-11-18
      *
      * ------------------------------------------------------------------------ */
-    function voir_traces($session_id = NULL)
+    function voir_traces($id = NULL)
     {
-        if (empty($session_id))
+        if (empty($id))
         {
-            echo 'Aucune session_id fournie';
+            echo 'Aucune trace_id fournie ou soumission_reference fournie';
             die;
         }
 
-        $this->db->from  ('etudiants_traces');
-        $this->db->where ('session_id', $session_id);
-        $this->db->limit (1);
-        
-        $query = $this->db->get();
-        
-        if ( ! $query->num_rows() > 0)
-        {
-            echo 'Aucune traces trouvée';
-            die;
-        }
+		if (ctype_digit($id))
+		{
+			$this->db->from  ('etudiants_traces');
+			$this->db->where ('id', $id);
+			$this->db->limit (1);
+			
+			$query = $this->db->get();
+			
+			if ( ! $query->num_rows() > 0)
+			{
+				echo 'Aucune trace_id trouvée';
+				die;
+			}
+		}
+		else
+		{
+			$this->db->from  ('etudiants_traces');
+			$this->db->where ('soumission_reference', $id);
+			$this->db->limit (1);
+			
+			$query = $this->db->get();
+			
+			if ( ! $query->num_rows() > 0)
+			{
+				echo 'Aucune trace pour soumission_reference trouvée';
+				die;
+			}
+		}
 
-        $t = $query->row_array();
+		$t = $query->row_array();
 
         $t['data'] = unserialize($t['data']);
 
-        p($t);
+		//
+		// Extraire 
+		// - le nom de l'etudiant 
+		// - le titre de l'evaluation
+		// pour s'assurer de ne pas se tromper de traces
+		//
+
+		$evaluation = $this->Evaluation_model->extraire_evaluation($t['evaluation_id']);
+		$etudiant = $this->Etudiant_model->extraire_etudiant($t['etudiant_id']);
+		$enseignant = $this->Enseignant_model->extraire_enseignant($evaluation['enseignant_id']); 
+
+		$data = [
+			'evaluation' => $evaluation,
+			'etudiant' => $etudiant,
+			'enseignant' => $enseignant,
+			'traces' => $t
+		];
+		
+        $this->load->view('commons/header', $this->data);
+		$this->load->view('admin/voir_traces', $data);
+		$this->load->view('commons/footer', $this->data);
     }
 
     /* ------------------------------------------------------------------------
