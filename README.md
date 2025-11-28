@@ -8,8 +8,8 @@
 
 KOVAO vise à offrir un environnement d’évaluation :
 
-- **centralisé et stable** pour le personnel enseignant ;
-- **transparent et équitable** pour les étudiants et étudiantes ;
+- **simple et pratique** pour le personnel enseignant;
+- **centralisée** pour les étudiants et étudiantes;
 - **pérenne et libre** pour les institutions d’enseignement.
 
 Toute personne ou institution peut l’utiliser et y contribuer librement,
@@ -87,9 +87,9 @@ KOVAO est configuré de façon à rouler seulement en https.
 Un manuel d'utilisation sommaire est disponible à cette adresse : [Manuel d'utilisation](https://docs.google.com/document/d/1gB2gdlvXzuszN6C3DhrJeLHWjMCv6p_3ZcliIVWIFuU/edit?tab=t.0)
 
 En 2024, les laboratoires ont été ajoutés en complément des évaluations.  
-Comme aucun éditeur graphique n'est disponible pour créer les vues de laboratoires, celles-ci doivent être développées directement en HTML en utilisant les balises PHP des helpers. Plusieurs exemples fonctionnels ainsi que des gabarits sont fournis dans le répertoire :  
-`/application/views/laboratoire`
+Comme aucun éditeur graphique n'est disponible pour créer les vues de laboratoires, celles-ci doivent être développées directement en HTML en utilisant les balises PHP des helpers. Plusieurs exemples fonctionnels ainsi que des gabarits sont fournis dans le répertoire : `/application/views/laboratoire`
 
 De 2018 à 2021, il était possible de répondre à une évaluation sans créer de compte. Cette fonctionnalité a depuis été retirée, mais il est possible que certains fragments de code liés à cet ancien mode de fonctionnement soient encore présents.
 
 KOVAO peut utiliser le disque pour stocker les documents des évaluations et des soumissions, mais il est présentement configuré pour les stocker dans un conteneur S3 sur Amazon AWS.
+
