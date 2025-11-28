@@ -1278,7 +1278,7 @@ class Etudiant_model extends CI_Model
      *
      * -------------------------------------------------------------------------------------------- */
     function extraire_comptes_etudiants($numero_das)
-    {
+	{
         $this->db->from     ('etudiants_numero_da as en, etudiants as e');
         $this->db->select   ('e.etudiant_id, e.nom, e.prenom, en.numero_da, e.courriel');
         $this->db->where    ('e.etudiant_id = en.etudiant_id');
@@ -1286,7 +1286,7 @@ class Etudiant_model extends CI_Model
         $this->db->where    ('en.groupe_id', $this->groupe_id);
         $this->db->where    ('e.actif', 1);
         $this->db->where    ('e.efface', 0);
-        $this->db->where    ('e.test', 0);
+		$this->db->where    ('e.test', 0); // Ceci pour ignorer les etudiants crees pour le testing
         
         $query = $this->db->get();
         
