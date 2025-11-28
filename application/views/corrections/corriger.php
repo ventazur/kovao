@@ -265,8 +265,8 @@
         <?
             $lab            = TRUE;
             $lab_data       = json_decode($soumission['lab_data'], TRUE);
-            $lab_valeurs    = json_decode($soumission['lab_valeurs'], TRUE);
-            $lab_points     = json_decode($soumission['lab_points'], TRUE);
+            $lab_valeurs    = $soumission['lab_valeurs'] ? json_decode($soumission['lab_valeurs'], TRUE) : NULL;
+            $lab_points     = $soumission['lab_points'] ? json_decode($soumission['lab_points'], TRUE) : NULL;
 
             $lab_points_champs   = json_decode($soumission['lab_points_champs'], TRUE);
             $lab_points_tableaux = json_decode($soumission['lab_points_tableaux'], TRUE);
@@ -313,21 +313,22 @@
         ?>
 
         <link href="<?= base_url() . 'assets/css/consulter.css?v=' . ($this->is_DEV ? $this->now_epoch : $this->current_commit); ?>" rel="stylesheet">
-        <link href="<?= base_url() . 'assets/css/lab.css?v=' . ($this->is_DEV ? $this->now_epoch : $this->current_commit); ?>" rel="stylesheet">
+		<link href="<?= base_url() . 'assets/css/lab.css?v=' . ($this->is_DEV ? $this->now_epoch : $this->current_commit); ?>" rel="stylesheet">
 
-        <? if (file_exists(APPPATH . 'views/laboratoire/' . $this->groupe['sous_domaine'] . '/' . $lab_vue . '_consulter.php')) : ?>
+		<? /* Ajout 2025-11-28 pour permettre les evaluations en equipe sans tableaux */ ?>
+		<? if ( ! empty($lab_vue)) : ?>
 
-            <? $this->load->view('laboratoire/' . $this->groupe['sous_domaine'] . '/' . $lab_vue . '_consulter', $data_lab); ?>
+			<? if (file_exists(APPPATH . 'views/laboratoire/' . $this->groupe['sous_domaine'] . '/' . $lab_vue . '_consulter.php')) : ?>
 
-        <? else : ?>
+				<? $this->load->view('laboratoire/' . $this->groupe['sous_domaine'] . '/' . $lab_vue . '_consulter', $data_lab); ?>
 
-            <? $this->load->view('laboratoire/' . $this->groupe['sous_domaine'] . '/' . $lab_vue, $data_lab); ?>
+			<? else : ?>
 
-        <? endif; ?>
+				<? $this->load->view('laboratoire/' . $this->groupe['sous_domaine'] . '/' . $lab_vue, $data_lab); ?>
 
-        <? /* RETIRER le 5 mars 2025
-            <? $this->load->view('laboratoire/clgchimie/' . $lab_vue . '_consulter', $partials); ?>
-        <? */ ?>
+			<? endif; ?>
+
+		<? endif; ?>
 
     <? endif; ?>
 
