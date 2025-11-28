@@ -628,6 +628,7 @@ class Etudiant_model extends CI_Model
         // *** Ceci sera rendu OBSOLETE a la session H2025, ainsi que la table 'soumissions_partagees'.
         //
 
+		/*
         $soumissions_p = array();
 
         $this->db->select   ('s.*');
@@ -647,7 +648,8 @@ class Etudiant_model extends CI_Model
         if ($query->num_rows() > 0)
         {
             $soumissions = array_merge($soumissions, $query->result_array());
-        }
+		}
+		*/
 
         //
         // Order by date
