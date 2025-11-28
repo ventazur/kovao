@@ -315,7 +315,7 @@
         <link href="<?= base_url() . 'assets/css/consulter.css?v=' . ($this->is_DEV ? $this->now_epoch : $this->current_commit); ?>" rel="stylesheet">
 		<link href="<?= base_url() . 'assets/css/lab.css?v=' . ($this->is_DEV ? $this->now_epoch : $this->current_commit); ?>" rel="stylesheet">
 
-		<? /* Ajout 2025-11-28 pour permettre les evaluations en equipe sans tableaux */ ?>
+		<? /* Ajout 2025-11-28 pour permettre la correction des evaluations en equipe sans tableau */ ?>
 		<? if ( ! empty($lab_vue)) : ?>
 
 			<? if (file_exists(APPPATH . 'views/laboratoire/' . $this->groupe['sous_domaine'] . '/' . $lab_vue . '_consulter.php')) : ?>
