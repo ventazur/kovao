@@ -24,7 +24,10 @@
             <? $i = 1;
 
                foreach ($questions as $q) : 
-                   
+
+					if ( ! array_key_exists('question_id', $q))
+						continue;
+
                    $pair = ($i % 2 == 0) ? TRUE : FALSE;
             ?>
 

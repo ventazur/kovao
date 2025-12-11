@@ -622,6 +622,9 @@
 
     foreach($questions as $q) : 
 
+		if ( ! array_key_exists('question_id', $q))
+			continue;
+
         $question_id = $q['question_id']; 
 
         if ( ! array_key_exists('sondage', $q) || ! $q['sondage'])
