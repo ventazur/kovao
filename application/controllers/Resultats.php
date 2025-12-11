@@ -1325,7 +1325,10 @@ class Resultats extends MY_Controller
                     }
 
                     foreach($champs_preserver as $champ)
-                    {
+					{
+						if ( ! is_array($qd))
+							continue;
+
                         if ( ! array_key_exists($champ, $qd))
                             continue;
 
@@ -1375,6 +1378,9 @@ class Resultats extends MY_Controller
 
                     foreach($champs_preserver as $champ)
                     {
+						if ( ! is_array($qd))
+							continue;
+
                         if ( ! array_key_exists($champ, $qd))
                             continue;
 
