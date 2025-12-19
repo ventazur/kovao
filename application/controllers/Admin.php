@@ -1239,7 +1239,39 @@ class Admin extends MY_Controller
         $this->load->view('admin/etudiants_connexions', $this->data);
         $this->load->view('commons/footer', $this->data);
         */
-    }
+	}
+
+    /* ------------------------------------------------------------------------
+     *
+	 * Effacer les etudiants inactifs depuis 3 ans ou plus
+	 *
+	 * ------------------------------------------------------------------------
+	 *
+	 * Cette fonction efface toutes les donnees relies aux etudiants inactifs.
+	 *
+	 * Effacer signifie changer le drapeau efface a 1.
+	 *
+	 * Il faut ensuite purger pour suprimer ces donnees definitivement.
+	 * La purge, activee par un cronjob, aura lieu 30 jours apres l'effacement
+	 * pour laisser le temps aux etudiants (ou leurs enseignants) de se manifester 
+	 * en cas d'effacement par megarde.
+	 *
+	 * ------------------------------------------------------------------------ */
+    function etudiants_inactifs_effacer()
+	{       
+		$this->data['rapports'] = $this->Admin_model->effacer_etudiants_inactifs_rapports();	
+
+        $this->load->view('commons/header', $this->data);
+        $this->load->view('admin/etudiants_effacer', $this->data);
+        $this->load->view('commons/footer', $this->data);
+	}
+
+
+    function etudiants_inactifs_effacer_action()
+	{       
+		$etudiants_effaces = $this->Admin_model->effacer_etudiants_inactifs(['mois' => 3*12]);
+	}
+
 
     /* ------------------------------------------------------------------------
      *

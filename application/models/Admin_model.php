@@ -1070,5 +1070,301 @@ class Admin_model extends CI_Model
 
         p($journees);
         die;
-    }
+	}
+
+    /* --------------------------------------------------------------------------------------------
+     *
+	 * Effacer les etudiants inactifs
+	 *
+     * -------------------------------------------------------------------------------------------- */
+    function effacer_etudiants_inactifs($options = array())
+	{
+    	$options = array_merge(
+			array(
+				'mois' => 3*12 // defaut
+           ),
+           $options
+		);
+
+		// Exclure ces etudiants (etudiant_id)
+
+		$etudiant_ids_exclure = [0, 1, 248];
+
+		// Drapeau pour effacement
+		
+		$data = ['efface' => 1, 'efface_epoch' => date('U'), 'efface_date' => date_humanize(date('U'), TRUE)];
+
+		// Obtenir la date du debut de la periode d'inactivite
+
+		try 
+		{
+			$maintenant = new DateTimeImmutable();
+			$intervalle = new DateInterval('P' . $options['mois'] . 'M'); // P36M
+
+			$date_passe = $maintenant->sub($intervalle);
+
+			$epoch = $date_passe->getTimestamp();
+		} 
+		catch (Exception $e) 
+		{
+			echo 'Erreur de date : ' . $e->getMessage();
+		}
+
+		$this->db->trans_begin();
+		$this->benchmark->mark('code_start');
+		
+		//
+		// Initialisation du rapport
+		//
+
+		$rapport = ['g' => 
+			[
+				'etudiants' => 0,
+				'soumissions_sans_etudiant_id' => 0
+			]
+		];
+
+		//
+		// compteurs
+		//
+
+		//
+		// Effacer les soumissions sans etudiant_id
+		// (auparavant il n'etait pas necessaire de s'inscrire)
+		//
+		
+		$this->db->where('efface', 0);
+		$this->db->where('etudiant_id', NULL);
+		$this->db->where('soumission_epoch <', $epoch);
+
+		$this->db->update($this->soumissions_t, $data);
+
+		if ($this->db->affected_rows() > 0)
+		{
+			$count_soumissions += $this->db->affected_rows();
+
+			$rapport['g']['soumissions_sans_etudiant_id'] = $this->db->affected_rows();
+		}
+
+		//
+		// Effacer les etudiants inactifs
+		//
+
+		// Extraire les etudiants a effacer
+
+		$etudiants = $this->Etudiant_model->extraire_etudiants_inactifs($epoch);
+
+		if (count($etudiants) > 0)
+		{
+			// Exclure certains etudiants
+
+			foreach($etudiant_ids_exclure as $etudiant_id)
+			{
+				if (array_key_exists($etudiant_id, $etudiants))
+					unset($etudiants[$etudiant_id]);
+			}		
+
+			$etudiant_ids = array_keys($etudiants);
+
+			$rapport = $rapport + $etudiants;
+
+			if (empty($etudiant_ids))
+			{
+				echo '0 etudiant inactif a effacer';
+				return;
+			}
+
+			//
+			// Effacer les etudiants inactifs de differentes tables
+			//
+
+			$tables = [
+				'activite',
+				'activite_evaluation',
+				'documents_etudiants',
+				'etudiants',
+				'etudiants_cours',
+				'etudiants_evaluations_notifications',
+				'etudiants_numero_da',
+				'etudiants_traces',
+				'evaluations_ponderations',
+				'evaluations_securite_chargements',
+				'soumissions',
+				'soumissions_consultees',
+				'soumissions_partagees',
+				'usagers_oubli_motdepasse'
+			];
+
+			foreach ($tables as $t)
+			{
+				$this->db->where('efface', 0);
+				$this->db->where_in('etudiant_id', $etudiant_ids);
+				$this->db->update($t, $data);
+
+				if ($this->db->affected_rows() > 0)
+				{
+					$rapport['g'][$t] = $this->db->affected_rows();
+				}
+			}
+
+			//
+			// Effacer les donnees de ces etudiants reliees a leur courriel
+			//
+
+			$courriels = array_column($etudiants, 'courriel');
+
+			$tables = [
+				'courriels_envoyes',
+				'inscriptions',
+				'inscriptions_invitations',
+				'securite_connexion_blocages',
+				'securite_connexion_tentatives'
+			];
+
+			foreach ($tables as $t)
+			{
+				$count = 0;
+
+				$chunk_size = 500;
+				$chunks = array_chunk($courriels, $chunk_size);
+
+				foreach($chunks as $c)
+				{	
+					// $this->db->where('efface', 0);
+					$this->db->where_in('courriel', $c);
+					$this->db->update($t, $data);
+
+					$count += $this->db->affected_rows();
+				}
+
+				if ($count > 0)
+				{
+					$rapport['g'][$t] = $count;
+				}
+			}
+
+			//
+			// Quelques cas particuliers
+			//
+
+			//
+			// soumissions (partenaire de laboratoire)
+			// soumissions_consultees (consulte_par_etudiant_id)
+			//
+
+			$count1 = 0; // soumissions
+			$count2 = 0; // soumissions_consultees
+
+			$chunk_size = 500;
+			$chunks = array_chunk($etudiant_ids, $chunk_size);
+
+			foreach($chunks as $c)
+			{	
+				$this->db->where   ('efface', 0);
+				$this->db->where_in('lab_etudiant2_id', $c);
+				$this->db->update  ('soumissions', ['lab_etudiant2_id' => NULL]);
+
+				$count1 += $this->db->affected_rows();
+
+				$this->db->where   ('efface', 0);
+				$this->db->where_in('lab_etudiant3_id', $c);
+				$this->db->update  ('soumissions', ['lab_etudiant3_id' => NULL]);
+
+				$count1 += $this->db->affected_rows();
+
+				$this->db->where   ('efface', 0);
+				$this->db->where_in('consulte_par_etudiant_id', $c);
+				$this->db->update  ('soumissions_consultees', ['consulte_par_etudiant_id' => NULL]);
+
+				$count2 += $this->db->affected_rows();
+			}
+
+			if ($count1 > 0)
+			{
+				$rapport['g']['soumissions_partenaire_labo'] = $count1;
+			}
+
+			if ($count2 > 0)
+			{
+				$rapport['g']['soumissions_consultees_par_etudiant_id'] = $count2;
+			}
+
+		} // if count $etudiants > 0
+
+		$this->benchmark->mark('code_end');
+
+		$rapport['g']['benchmark'] = $this->benchmark->elapsed_time('code_start', 'code_end');
+
+		// Ecrire le rapport de maintenance pour verification ulterieure
+		// en cas de problematiques.
+		// Etant donne que ce rapport contient des renseignants personnels,
+		// il sera eventuellement efface et purge apres un certain temps.
+
+		$options = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
+		$json = json_encode($rapport, $options);
+
+		$rapport_data = [
+			'enseignant_id' => $this->enseignant_id ?? NULL,
+			'cli'			=> is_cli() ? 1 : 0,
+			'action'		=> 'effacer_etudiants_inactifs',
+			'data'			=> $json,
+			'epoch'			=> date('U'),
+			'date'			=> date_humanize(date('U'), TRUE)
+		];
+
+		$this->db->insert('rapports_maintenance', $rapport_data);
+
+        if ($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_rollback();
+
+			$rapport_data['data'] = NULL;
+			$rapport_data['erreur'] = 1;
+
+			$this->db->insert('rapports_maintenance', $rapport_data);
+
+            return FALSE;
+		}
+
+		if ( ! is_cli())
+		{
+			echo 'succes';
+			echo '<pre>' . $json . '</pre>';
+		}
+
+		$this->db->trans_commit();
+
+		return TRUE;
+	}
+
+    /* --------------------------------------------------------------------------------------------
+     *
+	 * Effacer les etudiants inactifs (rapport)
+	 *
+     * -------------------------------------------------------------------------------------------- */
+    function effacer_etudiants_inactifs_rapports($options = array())
+	{
+    	$options = array_merge(
+			array(
+				'mois' => 3*12 // defaut
+           ),
+           $options
+		);
+
+		$this->db->where('action', 'effacer_etudiants_inactifs');
+
+		$query = $this->db->get('rapports_maintenance');
+
+        if ( ! $query->num_rows() > 0)
+        {
+            return array();
+		}
+
+		$rapports = $query->result_array();
+
+		$epochs = array_column($rapports, 'epoch');
+		array_multisort($epochs, SORT_DESC, SORT_NUMERIC, $rapports);
+
+		return $rapports;
+	}
 }

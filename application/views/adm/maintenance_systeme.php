@@ -73,10 +73,16 @@
     </li>
     <li>
         <a class="lien spinnable" href="<?= base_url() . 'admin/etudiants_connexions'; ?>">
-            Le nombre d'étudiants différents qui se sont connectés à chaque jour
+            Nombre d'étudiants différents qui se sont connectés à chaque jour
             <span class="spinner d-none" style="margin-left: 7px"><i class="fa fa-circle-o-notch fa-spin"></i></span>
         </a>
-    </li>
+	</li>
+    <li>
+        <a class="lien spinnable" href="<?= base_url() . 'admin/etudiants_inactifs_effacer'; ?>">
+            Effacer les étudiants inactifs depuis 3 ans et plus
+            <span class="spinner d-none" style="margin-left: 7px"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+        </a>
+	</li>
 </ul>
 
 <?

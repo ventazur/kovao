@@ -154,6 +154,52 @@ class Etudiant_model extends CI_Model
 
     /* --------------------------------------------------------------------------------------------
      *
+     * Extraire les etudiants inactifs
+     *
+     * -------------------------------------------------------------------------------------------- */
+    function extraire_etudiants_inactifs($depuis_epoch = 0)
+	{
+		if (empty($depuis_epoch) || $depuis_epoch == 0)
+			return [];
+
+		$etudiants = [];
+
+		//
+		// pour les etudiants ayant ete actifs, considerer la derniere date d'activite
+		//
+
+		$this->db->select ('etudiant_id, nom, prenom, courriel, inscription_date, derniere_activite_date, activite_compteur');
+		$this->db->where  ('derniere_activite_epoch <', $depuis_epoch);
+		$this->db->where  ('efface', 0);
+
+		$query = $this->db->get($this->etudiants_t);
+
+		foreach ($query->result_array() as $row)
+		{
+			$etudiants[$row['etudiant_id']] = $row;
+		}
+
+		//
+		// pour les etudiants n'ayant jamais ete actifs, considerer la date d'inscription
+		//
+
+		$this->db->select ('etudiant_id, nom, prenom, courriel, inscription_date, derniere_activite_date, activite_compteur');
+		$this->db->where  ('derniere_activite_epoch', NULL);
+		$this->db->where  ('inscription_epoch <', $depuis_epoch);
+		$this->db->where  ('efface', 0);
+
+		$query = $this->db->get($this->etudiants_t);
+
+		foreach ($query->result_array() as $row)
+		{
+			$etudiants[$row['etudiant_id']] = $row;
+		}
+
+		return $etudiants;
+	}
+
+    /* --------------------------------------------------------------------------------------------
+     *
      * Extraire le numero_da de l'etudiant
      *
      * -------------------------------------------------------------------------------------------- */
@@ -661,7 +707,7 @@ class Etudiant_model extends CI_Model
 		});
 
         return $soumissions;
-    }
+	}
 
     /* --------------------------------------------------------------------------------------------
      *

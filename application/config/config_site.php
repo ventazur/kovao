@@ -81,6 +81,8 @@ $config['ips_whitelist'] = array(
 
 $config['database_tables'] = array(
 //  clef                       nom de la table
+	'documents'				=> 'documents',
+	'documents_etudiants'   => 'documents_etudiants',
     'ecoles'                => 'ecoles',
     'enseignants'           => 'enseignants',
     'enseignants_groupes'   => 'enseignants_groupes',
@@ -90,12 +92,13 @@ $config['database_tables'] = array(
     'evaluations'           => 'evaluations',
     'inscriptions'          => 'inscriptions',
     'groupes'               => 'groupes',
-    'parametres'            => 'parametres',
-    'semestres'             => 'semestres',
+	'parametres'            => 'parametres',
+	'semestres'             => 'semestres',
     'scrutins'              => 'scrutins',
     'scrutins_choix'        => 'scrutins_choix',
     'scrutins_documents'    => 'scrutins_documents',
-    'scrutins_participants' => 'scrutins_participants'
+	'scrutins_participants' => 'scrutins_participants',
+	'soumissions'			=> 'soumissions'
 );
 
 /* --------------------------------------------------------------------------
