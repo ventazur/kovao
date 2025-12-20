@@ -252,36 +252,39 @@ class Cli_model extends CI_Model
         // Charger toutes les sessions
         // 
 
-        $this->db->from ('ci_sessions');
-
-        $query = $this->db->get();
+        $query = $this->db->get('ci_sessions');
         
         if ( ! $query->num_rows() > 0)
-             return FALSE;
+             return 0;
                                                                                                                                                                                                                                   
         $sessions = $query->result_array();
 
         //
         // Effacer les sessions plus vieilles que l'interval voulu
         //
-        
-        if (count($sessions))
-        {
-            $interval = date('U') - (60*60*24*7); // 7 jours
 
-            foreach($sessions as $s)
-            {
-                if ($s['timestamp'] < ($interval))
-                {
-                    $this->db->where('id', $s['id']);
-                    $this->db->delete('ci_sessions');
+		if ( ! empty($sessions))
+			return 0;
 
-                    $effacements++;
-                }
-            }
-        }
+		$interval = date('U') - (60*60*24*7); // 7 jours
 
-        return $effacements;
+		$session_ids = [];
+
+		foreach($sessions as $s)
+		{
+			if ($s['timestamp'] < ($interval))
+			{
+				$session_ids[] = $s['id'];
+			}
+		}
+
+		if ( ! empty($session_ids))
+		{
+				$this->db->where_in('id', $session_ids);
+				$this->db->delete('ci_sessions');
+		}
+
+        return count($session_ids);
     }
 
     /* --------------------------------------------------------------------------------------------
