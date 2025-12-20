@@ -1132,10 +1132,6 @@ class Admin_model extends CI_Model
 		];
 
 		//
-		// compteurs
-		//
-
-		//
 		// Effacer les soumissions sans etudiant_id
 		// (auparavant il n'etait pas necessaire de s'inscrire)
 		//
@@ -1170,16 +1166,14 @@ class Admin_model extends CI_Model
 				if (array_key_exists($etudiant_id, $etudiants))
 					unset($etudiants[$etudiant_id]);
 			}		
+		}
 
+		if (count($etudiants) > 0)
+		{
 			$etudiant_ids = array_keys($etudiants);
 
+			$rapport['g']['etudiants'] = count($etudiants);
 			$rapport = $rapport + $etudiants;
-
-			if (empty($etudiant_ids))
-			{
-				echo '0 etudiant inactif a effacer';
-				return;
-			}
 
 			//
 			// Effacer les etudiants inactifs de differentes tables
