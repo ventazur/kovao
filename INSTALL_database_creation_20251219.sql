@@ -23,12 +23,15 @@ CREATE TABLE `activite` (
   `jour` int unsigned DEFAULT NULL,
   `heure` varchar(2) DEFAULT NULL,
   `minute` varchar(2) DEFAULT NULL,
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `epoch` (`epoch`),
   KEY `etudiant_id` (`etudiant_id`),
   KEY `semestre_id` (`semestre_id`),
   KEY `enseignant_id` (`enseignant_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=326293 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=376075 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'activite_debug'
 CREATE TABLE `activite_debug` (
@@ -48,8 +51,11 @@ CREATE TABLE `activite_debug` (
   `fureteur` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `date` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `epoch` int DEFAULT NULL,
+  `efface` tinyint(1) NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22597 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27480 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Create syntax for TABLE 'activite_evaluation'
 CREATE TABLE `activite_evaluation` (
@@ -70,9 +76,11 @@ CREATE TABLE `activite_evaluation` (
   `fureteur_id` varchar(64) DEFAULT NULL,
   `fureteur` varchar(50) DEFAULT NULL,
   `plateforme` varchar(50) DEFAULT NULL,
-  `efface` tinyint(1) NOT NULL DEFAULT '0',
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=214926 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=221854 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'activite_terminer_evaluations'
 CREATE TABLE `activite_terminer_evaluations` (
@@ -88,7 +96,7 @@ CREATE TABLE `activite_terminer_evaluations` (
   `epoch` int unsigned NOT NULL,
   `cli` tinyint unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5710 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=6559 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'alertes'
 CREATE TABLE `alertes` (
@@ -104,7 +112,7 @@ CREATE TABLE `alertes` (
   `extra` mediumtext,
   `enseignant_id_concerne` int DEFAULT NULL,
   PRIMARY KEY (`alerte_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7801 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=7915 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'blocs'
 CREATE TABLE `blocs` (
@@ -120,7 +128,7 @@ CREATE TABLE `blocs` (
   `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`bloc_id`),
   KEY `evaluation_id` (`evaluation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9993 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10049 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'ci_sessions'
 CREATE TABLE `ci_sessions` (
@@ -143,8 +151,11 @@ CREATE TABLE `courriels_envoyes` (
   `raison_data` mediumtext,
   `status_code` smallint DEFAULT '0',
   `erreur_msg` text,
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=70434 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=72246 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'courriels_fournisseurs'
 CREATE TABLE `courriels_fournisseurs` (
@@ -179,6 +190,8 @@ CREATE TABLE `cours` (
   `desuet` tinyint unsigned NOT NULL DEFAULT '0',
   `actif` tinyint unsigned NOT NULL DEFAULT '1',
   `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`cours_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb3;
 
@@ -205,7 +218,7 @@ CREATE TABLE `documents` (
   `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`doc_id`),
   KEY `question_id` (`question_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21466 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=21515 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'documents_etudiants'
 CREATE TABLE `documents_etudiants` (
@@ -242,7 +255,7 @@ CREATE TABLE `documents_etudiants` (
   `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`doc_id`),
   KEY `question_id` (`question_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24253 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=24502 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'ecoles'
 CREATE TABLE `ecoles` (
@@ -258,6 +271,8 @@ CREATE TABLE `ecoles` (
   `visible` tinyint unsigned NOT NULL DEFAULT '1',
   `actif` tinyint unsigned NOT NULL DEFAULT '1',
   `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`ecole_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb3;
 
@@ -283,10 +298,13 @@ CREATE TABLE `eleves` (
   `programme_code` varchar(10) DEFAULT NULL,
   `code_permanent` varchar(15) DEFAULT NULL,
   `temps_supp` float NOT NULL DEFAULT '0',
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`eleve_id`),
   KEY `enseignant_id` (`enseignant_id`),
   KEY `semestre_id` (`semestre_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17393 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=17394 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'enseignants'
 CREATE TABLE `enseignants` (
@@ -313,6 +331,8 @@ CREATE TABLE `enseignants` (
   `actif` tinyint unsigned NOT NULL DEFAULT '0',
   `test` tinyint(1) NOT NULL DEFAULT '0',
   `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`enseignant_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb3;
 
@@ -324,7 +344,10 @@ CREATE TABLE `enseignants_groupes` (
   `niveau` tinyint unsigned NOT NULL DEFAULT '1',
   `actif` tinyint(1) NOT NULL DEFAULT '1',
   `ajout_date` varchar(19) DEFAULT NULL,
-  `ajout_epoch` int unsigned DEFAULT NULL
+  `ajout_epoch` int unsigned DEFAULT NULL,
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'enseignants_groupes_demandes'
@@ -343,6 +366,8 @@ CREATE TABLE `enseignants_groupes_demandes` (
   `traitement_expiration_epoch` int unsigned DEFAULT NULL,
   `traitement_expiration_date` varchar(19) DEFAULT NULL,
   `efface` tinyint NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`joindre_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3;
 
@@ -358,9 +383,11 @@ CREATE TABLE `enseignants_traces` (
   `expiration_epoch` int unsigned DEFAULT NULL,
   `expiration_date` varchar(19) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `efface` tinyint(1) NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `evaluation_id` (`evaluation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49656 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=49668 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'etudiants'
 CREATE TABLE `etudiants` (
@@ -382,9 +409,11 @@ CREATE TABLE `etudiants` (
   `montrer_rang_evaluation` tinyint(1) NOT NULL DEFAULT '1',
   `actif` tinyint(1) NOT NULL DEFAULT '0',
   `test` tinyint(1) NOT NULL DEFAULT '0',
-  `efface` tinyint DEFAULT '0',
+  `efface` tinyint unsigned DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`etudiant_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6502 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=6525 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'etudiants_cours'
 CREATE TABLE `etudiants_cours` (
@@ -397,6 +426,9 @@ CREATE TABLE `etudiants_cours` (
   `numero_da` varchar(20) DEFAULT NULL,
   `ajout_date` varchar(19) NOT NULL DEFAULT '',
   `ajout_epoch` int unsigned NOT NULL,
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6668 DEFAULT CHARSET=utf8mb3;
 
@@ -411,7 +443,7 @@ CREATE TABLE `etudiants_evaluations_messages` (
   `epoch` int unsigned NOT NULL,
   PRIMARY KEY (`message_id`),
   KEY `evaluation_reference` (`evaluation_reference`)
-) ENGINE=InnoDB AUTO_INCREMENT=330 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=349 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'etudiants_evaluations_notifications'
 CREATE TABLE `etudiants_evaluations_notifications` (
@@ -422,8 +454,11 @@ CREATE TABLE `etudiants_evaluations_notifications` (
   `evaluation_reference` varchar(12) DEFAULT NULL,
   `message_id` int unsigned NOT NULL,
   `extrait` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`notification_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1123 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=1142 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'etudiants_numero_da'
 CREATE TABLE `etudiants_numero_da` (
@@ -432,8 +467,11 @@ CREATE TABLE `etudiants_numero_da` (
   `ecole_id` int unsigned DEFAULT NULL,
   `groupe_id` int unsigned NOT NULL,
   `numero_da` varchar(20) NOT NULL DEFAULT '',
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6369 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=6393 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'etudiants_traces'
 CREATE TABLE `etudiants_traces` (
@@ -458,8 +496,10 @@ CREATE TABLE `etudiants_traces` (
   `soumission_reference` varchar(12) DEFAULT NULL,
   `evaluation_terminee` tinyint(1) NOT NULL DEFAULT '0',
   `evaluation_envoyee` tinyint(1) NOT NULL DEFAULT '0',
-  `efface` tinyint(1) NOT NULL DEFAULT '0',
   `efface_par_etudiant` tinyint(1) NOT NULL DEFAULT '0',
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   `DESUET_modification_epoch` int unsigned DEFAULT NULL,
   `DESUET_modification_date` varchar(19) DEFAULT NULL,
   `DESUET_expiration_epoch` int NOT NULL,
@@ -467,7 +507,7 @@ CREATE TABLE `etudiants_traces` (
   PRIMARY KEY (`id`),
   KEY `evaluation_id` (`evaluation_id`),
   KEY `evaluation_reference` (`evaluation_reference`)
-) ENGINE=InnoDB AUTO_INCREMENT=62551 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=64334 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'evaluations'
 CREATE TABLE `evaluations` (
@@ -502,7 +542,7 @@ CREATE TABLE `evaluations` (
   `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`evaluation_id`),
   KEY `groupe_id` (`groupe_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2287 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=2308 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'evaluations_ponderations'
 CREATE TABLE `evaluations_ponderations` (
@@ -515,8 +555,10 @@ CREATE TABLE `evaluations_ponderations` (
   `date` varchar(19) NOT NULL DEFAULT '',
   `epoch` int unsigned NOT NULL,
   `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`ponderation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1273 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=1318 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'evaluations_securite_blocages'
 CREATE TABLE `evaluations_securite_blocages` (
@@ -554,7 +596,7 @@ CREATE TABLE `evaluations_securite_chargements` (
   PRIMARY KEY (`id`),
   KEY `unique_id` (`unique_id`),
   KEY `evaluation_id` (`evaluation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=79183 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=80967 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'forums_commentaires'
 CREATE TABLE `forums_commentaires` (
@@ -626,6 +668,8 @@ CREATE TABLE `groupes` (
   `visible` tinyint unsigned NOT NULL DEFAULT '1',
   `actif` tinyint unsigned NOT NULL DEFAULT '1',
   `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`groupe_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 
@@ -651,8 +695,10 @@ CREATE TABLE `inscriptions` (
   `inscription_date` varchar(19) NOT NULL DEFAULT '',
   `inscription_epoch` int unsigned NOT NULL,
   `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`inscription_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7716 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=7741 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'inscriptions_courriels_jetables'
 CREATE TABLE `inscriptions_courriels_jetables` (
@@ -710,7 +756,7 @@ CREATE TABLE `questions` (
   PRIMARY KEY (`question_id`),
   KEY `evaluation_id` (`evaluation_id`),
   KEY `bloc_id` (`bloc_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=67988 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=68423 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'questions_grilles_correction'
 CREATE TABLE `questions_grilles_correction` (
@@ -721,11 +767,11 @@ CREATE TABLE `questions_grilles_correction` (
   `actif` tinyint(1) NOT NULL DEFAULT '1',
   `ajout_date` varchar(19) NOT NULL DEFAULT '',
   `ajout_epoch` int NOT NULL,
-  `efface` tinyint(1) NOT NULL DEFAULT '0',
-  `efface_epoch` int DEFAULT NULL,
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
   `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`grille_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5258 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=5269 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'questions_grilles_correction_elements'
 CREATE TABLE `questions_grilles_correction_elements` (
@@ -743,7 +789,7 @@ CREATE TABLE `questions_grilles_correction_elements` (
   `efface_date` varchar(19) DEFAULT NULL,
   `efface_epoch` int unsigned DEFAULT NULL,
   PRIMARY KEY (`element_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=53061 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=53148 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'questions_similarites'
 CREATE TABLE `questions_similarites` (
@@ -751,8 +797,11 @@ CREATE TABLE `questions_similarites` (
   `question_id` int unsigned NOT NULL,
   `similarite` tinyint NOT NULL,
   `variation` tinyint DEFAULT NULL,
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`similarite_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1717 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=1719 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'questions_tolerances'
 CREATE TABLE `questions_tolerances` (
@@ -761,8 +810,24 @@ CREATE TABLE `questions_tolerances` (
   `tolerance` float NOT NULL,
   `type` tinyint(1) NOT NULL,
   `penalite` int NOT NULL,
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`tolerance_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5450 DEFAULT CHARSET=utf8mb3;
+
+-- Create syntax for TABLE 'rapports_maintenance'
+CREATE TABLE `rapports_maintenance` (
+  `rapport_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `enseignant_id` int unsigned DEFAULT NULL,
+  `cli` tinyint(1) NOT NULL DEFAULT '0',
+  `erreur` tinyint(1) NOT NULL DEFAULT '0',
+  `action` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `data` json DEFAULT NULL,
+  `epoch` int unsigned NOT NULL,
+  `date` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`rapport_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Create syntax for TABLE 'rel_enseignants_cours'
 CREATE TABLE `rel_enseignants_cours` (
@@ -806,7 +871,7 @@ CREATE TABLE `rel_enseignants_evaluations` (
   `efface_epoch` int unsigned DEFAULT NULL,
   `efface_par_cli` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`relee_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=631 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=691 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'reponses'
 CREATE TABLE `reponses` (
@@ -828,7 +893,7 @@ CREATE TABLE `reponses` (
   `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`reponse_id`),
   KEY `question_id` (`question_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=244557 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=246109 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'scrutins'
 CREATE TABLE `scrutins` (
@@ -991,6 +1056,9 @@ CREATE TABLE `securite_connexion_blocages` (
   `adresse_ip` varchar(15) DEFAULT NULL,
   `expiration_epoch` int DEFAULT NULL,
   `expiration_date` varchar(19) DEFAULT NULL,
+  `efface` tinyint(1) NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb3;
 
@@ -1001,8 +1069,11 @@ CREATE TABLE `securite_connexion_tentatives` (
   `adresse_ip` varchar(19) DEFAULT NULL,
   `epoch` int DEFAULT NULL,
   `date` varchar(19) DEFAULT NULL,
+  `efface` tinyint(1) DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19949 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=20490 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'semestres'
 CREATE TABLE `semestres` (
@@ -1016,6 +1087,9 @@ CREATE TABLE `semestres` (
   `semestre_fin_epoch` int unsigned DEFAULT NULL,
   `semestre_fin_date` varchar(19) DEFAULT NULL,
   `actif` tinyint(1) NOT NULL DEFAULT '1',
+  `efface` tinyint unsigned DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`semestre_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb3;
 
@@ -1069,7 +1143,7 @@ CREATE TABLE `soumissions` (
   `version` tinyint NOT NULL DEFAULT '1',
   `non_terminee` tinyint(1) NOT NULL DEFAULT '0',
   `efface` tinyint unsigned NOT NULL DEFAULT '0',
-  `efface_epoch` int DEFAULT NULL,
+  `efface_epoch` int unsigned DEFAULT NULL,
   `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`soumission_id`),
   KEY `enseignant_id` (`enseignant_id`),
@@ -1078,7 +1152,7 @@ CREATE TABLE `soumissions` (
   KEY `cours_id` (`cours_id`),
   KEY `etudiant_id` (`etudiant_id`),
   KEY `evaluation_id` (`evaluation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=79405 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=81179 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'soumissions_consultees'
 CREATE TABLE `soumissions_consultees` (
@@ -1092,15 +1166,18 @@ CREATE TABLE `soumissions_consultees` (
   `data` text,
   `date` varchar(19) NOT NULL DEFAULT '',
   `epoch` int unsigned NOT NULL,
+  `efface` tinyint(1) NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9919 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10561 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'soumissions_partagees'
 CREATE TABLE `soumissions_partagees` (
   `soumission_p_id` int unsigned NOT NULL AUTO_INCREMENT,
   `soumission_id` int unsigned NOT NULL,
   `etudiant_id` int unsigned NOT NULL,
-  `efface` tinyint(1) NOT NULL DEFAULT '0',
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
   `efface_epoch` int unsigned DEFAULT NULL,
   `efface_date` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`soumission_p_id`)
@@ -1117,9 +1194,11 @@ CREATE TABLE `usagers_oubli_motdepasse` (
   `clef_reinitialisation_expiration` int unsigned DEFAULT NULL,
   `clef_utilisee_date` varchar(19) DEFAULT NULL,
   `clef_utilisee_epoch` int unsigned DEFAULT NULL,
-  `efface` tinyint(1) NOT NULL DEFAULT '0',
+  `efface` tinyint unsigned NOT NULL DEFAULT '0',
+  `efface_epoch` int unsigned DEFAULT NULL,
+  `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`oubli_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1850 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=1884 DEFAULT CHARSET=utf8mb3;
 
 -- Create syntax for TABLE 'variables'
 CREATE TABLE `variables` (
@@ -1138,5 +1217,4 @@ CREATE TABLE `variables` (
   `efface_date` varchar(19) DEFAULT NULL,
   PRIMARY KEY (`variable_id`),
   KEY `evaluation_id` (`evaluation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1606 DEFAULT CHARSET=utf8mb3;
-
+) ENGINE=InnoDB AUTO_INCREMENT=1612 DEFAULT CHARSET=utf8mb3;

@@ -1461,7 +1461,9 @@ class Auth_model extends CI_Model
 			array(
 				'clef_utilisee_date'  => date_humanize($this->now_epoch, TRUE),
 				'clef_utilisee_epoch' => $this->now_epoch,
-				'efface' 			  => 1
+				'efface' 			  => 1,
+				'efface_epoch'		  => $this->now_epoch,
+				'efface_date'		  => date_humanize($this->now_epoch, TRUE)
 			)
 		);
 

@@ -286,10 +286,14 @@ class Cli_model extends CI_Model
 
     /* --------------------------------------------------------------------------------------------
      *
-     * Purger les soumissions effacees
+	 * Purger les soumissions effacees (OBSOLETE)
+	 *
+	 * --------------------------------------------------------------------------------------------
+	 *
+	 * Cette function est remplacee par 'purger_items' qui inclus les soumissions.
      *
      * -------------------------------------------------------------------------------------------- */
-    function purger_soumissions()
+    function OBSOLETE_purger_soumissions()
     {
         $effacements = 0;
 
@@ -519,7 +523,7 @@ class Cli_model extends CI_Model
                 // Le nom du fichier est la seule facon de les detecter.
 
                 /*
-                if ($doc['s3'])
+                if ($doc['s4'])
                 {
                     if ( ! $this->Document_model->_effacer_s3(array('dossier' => 'evaluations', 'key' => $doc['doc_filename'])))
                     {
@@ -577,40 +581,175 @@ class Cli_model extends CI_Model
 
     /* --------------------------------------------------------------------------------------------
      *
-     * Purger les traces expirees
+     * Purger les items
+     *
+     * --------------------------------------------------------------------------------------------
+	 * 
+	 * Cette fonction permet de supprimer les items effaces.
+	 *
+	 * (!) Les documents doivent etre supprimes en meme temps que le fichier sur le disque/S3, dans
+	 *     une autre function dediee a cette fin.
+	 *
+	 * version 2 (2025-12-19)
      *
      * -------------------------------------------------------------------------------------------- */
-    function purger_traces()
-    {
-        /*
-            Ces traces ne sont plus utilisees.
-            Toutes les traces ont ete deplacees dans etudiants_traces, incluant celles des etudiants non inscrits.
-        */
-    
-        /*
-        $this->db->from ('traces');
-        $this->db->where('expiration_epoch <', date('U'));
+    function purger_items()
+	{
+		// supprimer les items effaces depuis plus de...
+		//  30 :  30 jours
+		// 180 : 180 jours
 
-        $query = $this->db->get();
-        
-        if ( ! $query->num_rows() > 0)
-            return 0;
+		$tables_a_purger = [
+			30 => [
+				'activite', 'activite_debug', 'activite_evaluation', 
+				'courriels_envoyes', 
+				'cours',
+				'ecoles',
+				'enseignants', 'enseignants_groupes', 'enseignants_groupes_demandes', 'enseignants_traces',
+				'etudiants', 'etudiants_cours', 'etudiants_evaluations_notifications', 'etudiants_numero_da', 'etudiants_traces',
+				'groupes',
+				'inscriptions', 'inscriptions_invitations',
+				'usagers_oubli_motdepasse'
+			],
+			180 => [
+				'blocs',
+				'evaluations', 'evaluations_ponderations', 'evaluations_securite_chargements', 
+				'questions', 'questions_grilles_correction', 'questions_grilles_correction_elements',
+				'questions_similarites', 'questions_tolerances',
+				'rel_enseignants_evaluations',
+				'reponses',
+				'semestres',
+				'soumissions', 'soumissions_consultees', 'soumissions_partagees',
+				'variables'
+			]
+		];
 
-        $results = $query->result_array();
-        $results = array_keys_swap($results, 'id');
+		//
+		// Preparer le rapport
+		//
+		
+		$rapport = [
+			'cli' 	 => is_cli(),
+			'action' => 'purger_items',
+			'epoch'  => date('U'),
+			'data'	 => [],
+			'date'   => date_humanize(date('U'), TRUE)
+		];
 
-        $this->db->where_in('id', array_keys($results));
-        $this->db->delete('traces');
+		$json_options = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
 
-        return count($results);
-        */
+		//
+		// Supprimer les items de plusieurs tables
+		//
 
-        return 0;
+		$tables = $this->db->list_tables();
+
+		$this->db->trans_begin();
+
+		foreach($tables_a_purger as $expiration => $t_arr)
+		{
+			try 
+			{
+				$maintenant = new DateTimeImmutable();
+				$intervalle = new DateInterval('P' . $expiration . 'D'); // P180D
+
+				$date_passee = $maintenant->sub($intervalle);
+
+				$epoch = $date_passee->getTimestamp();
+			} 
+			catch (Exception $e) 
+			{
+				$rapport['erreur'] = 1;
+				$rapport['data'] = json_encode(['erreur_msg' => 'erreur de date' . ' ' . $e->getMessage()], $json_options);
+
+				$this->db->insert('rapports_maintenance', $rapport);
+				exit;
+			}
+
+			foreach($t_arr as $t)
+			{
+				if ( ! in_array($t, $tables))
+				{
+					$rapport['data'][$t] = 'inexistante';
+					continue;
+				}
+
+				$key = $this->db->primary($t);
+				
+				$this->db->reset_query();
+
+				$this->db->where('efface', 1);
+
+				if ($t == 'usagers_oubli_motdepasse')
+				{
+					$this->db->where('clef_utilisee_epoch <', $epoch);
+					$this->db->or_where('efface_epoch <', $epoch);
+				}
+				else
+				{
+					$this->db->where('efface_epoch <', $epoch);
+				}
+
+				$query = $this->db->get($t);
+
+				if ( ! $query->num_rows() > 0)
+				{
+					$rapport['data'][$t] = 0;
+					continue;
+				}
+
+				$ids_a_supprimer = [];
+
+				foreach($query->result_array() as $row)
+				{
+					$ids_a_supprimer[] = $row[$key];
+				}
+
+				if ( ! empty($ids_a_supprimer))
+				{
+					$count = 0;
+
+					$chunk_size = 500;
+					$chunks = array_chunk($ids_a_supprimer, $chunk_size);
+
+					foreach($chunks as $c)
+					{	
+						$this->db->where_in($key, $c);
+						$this->db->delete($t);
+						
+						$count += $this->db->affected_rows();
+					}
+					
+					$rapport['data'][$t] = $count;
+				}
+			}
+		}
+
+		//
+		// Rediger le rapport
+		//
+
+		$rapport['data'] = json_encode($rapport['data'], $json_options);
+		$this->db->insert('rapports_maintenance', $rapport);
+
+        if ($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_rollback();
+
+			$rapport['erreur'] = 1;
+			$this->db->insert('rapports_maintenance', $rapport);
+
+            exit;
+		}
+
+        $this->db->trans_commit();
+
+		exit;
     }
 
     /* --------------------------------------------------------------------------------------------
      *
-     * Purger les items
+     * Purger les items (OBSOLETE)
      *
      * --------------------------------------------------------------------------------------------
      * 
@@ -618,7 +757,7 @@ class Cli_model extends CI_Model
      * evaluations, blocs, variables, questions et reponses 
      *
      * -------------------------------------------------------------------------------------------- */
-    function purger_items()
+    function OBSOLETE_purger_items()
     {
         $effacements     = 0;
         $non_effacements = 0;
@@ -697,23 +836,51 @@ class Cli_model extends CI_Model
     function nouveaux_courriels_jetables($securite = NULL)
     {
         //
-        // La liste mise-a-jour regulierement
-        // ref : https://github.com/ivolo/disposable-email-domains
+        // La liste est mise a jour regulierement : 
+		// https://github.com/tompec/disposable-email-domains
         //
 
-        // $domaines_url = 'https://github.com/ivolo/disposable-email-domains/blob/master/index.json?raw=true';
         $domaines_url = 'https://github.com/tompec/disposable-email-domains/raw/refs/heads/main/index.json';
 
         if ($securite != 1)
         {
-            echo "\n" . 'lien a verifier: ' . $domaines_url . "\n\n";
-
-            die('Verifier le lien URL avant de charger la mise a jour des courriels jetables. Ensuite, utilisez 1 pour confirmer.' . "\n\n");
+            echo "\n" . 'Lien a verifier: ' . $domaines_url . "\n";
+			echo 'Verifier le lien URL avant de charger la mise a jour des courriels jetables. Ensuite, utilisez 1 pour confirmer.' . "\n\n";
+			exit;
         }
 
-        $domaines = file_get_contents($domaines_url);
+		//
+		// Telecharger la liste
+		//
+
+		$domaines = @file_get_contents($domaines_url);
+
+		if ($domaines === FALSE) 
+		{
+			echo 'Impossible de recuperer la liste';
+			exit(9);
+		}
+
         $domaines = json_decode($domaines, TRUE);
 
+		//
+		// Verifier que le tableau n'est pas vide.
+		//
+
+		if (empty($domaines))
+		{
+			exit(9);
+		}
+
+		//
+		// Verifier que le tableau est unidimensionnel tel que suppose etre le json
+		//
+
+		if (count($domaines) !== count($domaines, COUNT_RECURSIVE))
+		{
+			exit(9);
+		}
+		
         //
         // Extraire les domaines deja reconnus
         //
@@ -738,7 +905,10 @@ class Cli_model extends CI_Model
         if ( ! empty($nouveaux))
         {
             foreach($nouveaux as $d)
-            {
+			{
+				if ( ! filter_var($d, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME))
+					continue;
+
                 $data[] = array(
                     'domaine' => $d
                 );
@@ -746,7 +916,7 @@ class Cli_model extends CI_Model
         }
 
         //
-        // Mettre a jour
+        // Ajouter les nouveaux domaines
         //
 
         if ( ! empty($data))
@@ -754,8 +924,8 @@ class Cli_model extends CI_Model
             $this->db->insert_batch('inscriptions_courriels_jetables', $data);
         }
 
-        echo count($data) . ' domaine' . (count($data) > 1 ? 's' : '') . ' ajouté' . (count($data) > 1 ? 's' : '');
-        return;
+		echo 'nombre de domaines ajoutes = ' . count($data) . "\n";
+        exit;
     }
 
 }

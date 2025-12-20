@@ -154,6 +154,20 @@ class Cli extends CI_Controller
 
     /* ------------------------------------------------------------------------
      *
+     * purger_soumissions (OBSOLETE)
+     *
+     * ------------------------------------------------------------------------
+     *
+     * Cette function sert a purger les soumissions effacees.
+     *
+     * ------------------------------------------------------------------------ */
+    public function OBSOLETE_purger_soumissions()
+    {
+        echo $this->Cli_model->purger_soumissions();
+	}
+
+    /* ------------------------------------------------------------------------
+     *
      * purger_soumissions
      *
      * ------------------------------------------------------------------------
@@ -161,9 +175,9 @@ class Cli extends CI_Controller
      * Cette function sert a purger les soumissions effacees.
      *
      * ------------------------------------------------------------------------ */
-    public function purger_soumissions()
+    public function effacer_etudiants_inactifs()
     {
-        echo $this->Cli_model->purger_soumissions();
+        echo $this->Admin_model->effacer_etudiants_inactifs();
     }
 
     /* ------------------------------------------------------------------------
@@ -184,20 +198,6 @@ class Cli extends CI_Controller
 
     /* ------------------------------------------------------------------------
      *
-     * purger_traces
-     *
-     * ------------------------------------------------------------------------
-     *
-     * Cette function sert a purger les traces expirees.
-     *
-     * ------------------------------------------------------------------------ */
-    public function DESUET_purger_traces()
-    {
-        echo $this->Cli_model->purger_traces();
-    }
-
-    /* ------------------------------------------------------------------------
-     *
      * purger_items
      *
      * ------------------------------------------------------------------------
@@ -209,7 +209,32 @@ class Cli extends CI_Controller
     public function purger_items()
     {
         echo $this->Cli_model->purger_items();
-    }
+	}
+
+    /* ------------------------------------------------------------------------
+     *
+     * purger_items_v2
+     *
+     * ------------------------------------------------------------------------
+     *
+     * Cette function sert a purger les items effaces.
+     *
+     * ------------------------------------------------------------------------ */
+    public function purger_items_v2()
+    {
+        echo $this->Cli_model->purger_items_v2();
+	}
+
+    /* ------------------------------------------------------------------------
+     *
+     * purger_suppressions
+     *
+     * ------------------------------------------------------------------------
+     *
+     * Cette function sert a purger les traces expirees.
+     *
+     * ------------------------------------------------------------------------ */
+
 
     /* ------------------------------------------------------------------------
      *

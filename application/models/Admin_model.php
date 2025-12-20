@@ -1304,7 +1304,7 @@ class Admin_model extends CI_Model
 		$json = json_encode($rapport, $options);
 
 		$rapport_data = [
-			'enseignant_id' => $this->enseignant_id ?? NULL,
+			'enseignant_id' => @$this->enseignant_id ?: NULL,
 			'cli'			=> is_cli() ? 1 : 0,
 			'action'		=> 'effacer_etudiants_inactifs',
 			'data'			=> $json,
@@ -1346,7 +1346,7 @@ class Admin_model extends CI_Model
 	{
     	$options = array_merge(
 			array(
-				'mois' => 3*12 // defaut
+				'mois' => 3*12 // defaut de 36 mois
            ),
            $options
 		);

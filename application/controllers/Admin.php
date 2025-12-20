@@ -1266,12 +1266,10 @@ class Admin extends MY_Controller
         $this->load->view('commons/footer', $this->data);
 	}
 
-
     function etudiants_inactifs_effacer_action()
 	{       
 		$etudiants_effaces = $this->Admin_model->effacer_etudiants_inactifs(['mois' => 3*12]);
 	}
-
 
     /* ------------------------------------------------------------------------
      *
