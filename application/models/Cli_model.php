@@ -289,62 +289,6 @@ class Cli_model extends CI_Model
 
     /* --------------------------------------------------------------------------------------------
      *
-	 * Purger les soumissions effacees (OBSOLETE)
-	 *
-	 * --------------------------------------------------------------------------------------------
-	 *
-	 * Cette function est remplacee par 'purger_items' qui inclus les soumissions.
-     *
-     * -------------------------------------------------------------------------------------------- */
-    function OBSOLETE_purger_soumissions()
-    {
-        $effacements = 0;
-
-        $this->db->from  ('soumissions');
-        $this->db->where ('efface', 1);
-        
-        $query = $this->db->get();
-        
-        if ( ! $query->num_rows() > 0)
-             return $effacements;
-                                                                                                                                                                                                                                  
-        $row = $query->row_array();
-        
-        $soumissions_a_effacer = array_keys_swap($query->result_array(), 'soumission_id');
-        
-        $epoch_30jours = date('U') - 60*60*24*30;
-
-        foreach($soumissions_a_effacer as $soumission_id => $s)
-        {
-            //
-            // Verifier qu'ils ont ete effaces il y a plus de 30 jours.
-            // De cette facon, je m'assure qu'il y a un backup quelque part de ces fichiers.
-            //
-            if ( ! empty($s['efface_epoch']) && $s['efface_epoch'] > $epoch_30jours)
-            {
-                unset($soumissions_a_effacer[$soumission_id]);
-                continue;
-            }
-        }
-
-        if ( ! empty($soumissions_a_effacer))
-        {
-            foreach($soumissions_a_effacer as $soumission_id => $s)
-            {
-                if (empty($soumission_id)) continue;
-    
-                $this->db->where ('soumission_id', $soumission_id);
-                $this->db->delete('soumissions');
-
-                $effacements++;
-            }
-        }
-
-        return $effacements;
-    }
-
-    /* --------------------------------------------------------------------------------------------
-     *
      * Purger les documents (images) effaces des evaluations 
      *
      * version 4 (2020-10-17)
@@ -750,87 +694,6 @@ class Cli_model extends CI_Model
 		exit;
     }
 
-    /* --------------------------------------------------------------------------------------------
-     *
-     * Purger les items (OBSOLETE)
-     *
-     * --------------------------------------------------------------------------------------------
-     * 
-     * Cette fonction permet d'effacer les items:
-     * evaluations, blocs, variables, questions et reponses 
-     *
-     * -------------------------------------------------------------------------------------------- */
-    function OBSOLETE_purger_items()
-    {
-        $effacements     = 0;
-        $non_effacements = 0;
-        $expiration      = date('U') - 60*60*24*30; // 30 jours
-
-        $this->db->trans_begin();
-
-        //
-        // Items
-        //
-
-        $tables = array(
-            // table         // id
-            'evaluations' => 'evaluation_id',
-            'blocs'       => 'bloc_id',
-            'variables'   => 'variable_id',
-            'questions'   => 'question_id',
-            'reponses'    => 'reponse_id'
-        );
-        
-        foreach($tables as $table => $id)
-        {
-            $this->db->from  ($table);
-            $this->db->where ('efface', 1);
-        
-            $query = $this->db->get();
-        
-            if ($query->num_rows() > 0)
-            {
-                $items_a_effacer = $query->num_rows;
-
-                foreach ($query->result_array() as $row)
-                {
-                    if ($row['efface_epoch'] > $expiration)
-                    {
-                        $non_effacements++;
-                        continue;
-                    }
-
-                    $this->db->where ($id, $row[$id]);
-                    $this->db->where ('efface', 1);
-                    $this->db->where ('efface_epoch <', $expiration);
-                    $this->db->delete($table);
-
-                    if ($this->db->affected_rows() > 1)
-                    {
-                        // Prevenir l'effacement de la table entiere dans le cas d'un probleme.
-                        $this->db->trans_rollback();
-                        return "Erreur Y888 : L'effacement de la table entière [" . $table . "] a été prévnu.";
-                    }
-
-                    $effacements++;
-
-                } // foreach result_array
-
-            } // if num_rows > 0
-
-        } // foreach $tables
-
-        $this->db->trans_commit();
-
-        $effacements_inflection     = ($effacements > 1 ? 's' : '');
-        $non_effacements_inflection = ($non_effacements > 1 ? 's' : ''); 
-
-        $str =  $effacements . ' item' . $effacements_inflection . ' purgé' . $effacements_inflection;
-        $str .= ' (' . $non_effacements . ' item' . $non_effacements_inflection . ' à purger plus tard)';
-
-        return $str;
-    }
-
     /* ------------------------------------------------------------------------
      *
      * Enregistrer les nouveaux domaines de courriels jetables
@@ -930,5 +793,4 @@ class Cli_model extends CI_Model
 		echo 'nombre de domaines ajoutes = ' . count($data) . "\n";
         exit;
     }
-
 }
