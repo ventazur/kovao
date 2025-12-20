@@ -163,7 +163,14 @@ class Admin_model extends CI_Model
      *
      * -------------------------------------------------------------------------------------------- */
     public function log_activite()
-    {
+	{
+		//
+		// Ne pas logger l'usurpation
+		//
+
+		if ($this->usurp !== FALSE)
+			return;	
+
         //
         // Ne pas logger les requetes AJAX.
         //

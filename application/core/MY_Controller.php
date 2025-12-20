@@ -139,7 +139,7 @@ class MY_Controller extends CI_Controller
         //
         // L'usurpation est un outil pour faciliter l'aide aux usagers avec les problemes qu'ils rencontrent.
 		// Au lieu de tenter de reproduire un probleme, simplement se connecter avec leur compte (en sautant l'etape d'authentification) 
-		// et constater le probleme. 
+		// et constater le probleme directement.
 		//
 
 		$this->usurp = FALSE; // admin
@@ -163,7 +163,7 @@ class MY_Controller extends CI_Controller
             }
 
             // Il est interdit d'usurper enseignant_id == 1
-            // @TODO : Eventuellement, verifier et interdire l'usurpation de tous les administrateurs.
+            // @TODO Verifier et interdire l'usurpation de tous les administrateurs.
 
             if ($this->usurp['type'] == 'enseignant' && $this->usurp['id'] == 1)
             {
