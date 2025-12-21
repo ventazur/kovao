@@ -23,6 +23,10 @@
  *
  *============================================================================= */
 
+use Aws\S3\S3Client;  
+use Aws\Exception\AwsException;
+use Aws\S3\Exception\S3Exception;		
+
 class Cli_model extends CI_Model
 {
 	function __construct()
@@ -285,7 +289,169 @@ class Cli_model extends CI_Model
 		}
 
         return count($session_ids);
-    }
+	}
+
+    /* --------------------------------------------------------------------------------------------
+     *
+     * Purger les documents des enseignants
+     *
+     * -------------------------------------------------------------------------------------------- */
+	function purger_documents_enseignants($jours = 180)
+	{
+		try 
+		{
+			$maintenant = new DateTimeImmutable();
+			$intervalle = new DateInterval('P' . $jours . 'D'); // P180D
+
+			$date_passee = $maintenant->sub($intervalle);
+
+			$epoch = $date_passee->getTimestamp();
+		} 
+		catch (Exception $e) 
+		{
+			exit(9);
+		}
+
+		//
+		// Preparer le rapport
+		//
+
+		$rapport = [
+			'cli' 	 => 1,
+			'erreur' => 0,
+			'action' => 'purger_documents_enseignants',
+			'epoch'  => date('U'),
+			'date'   => date_humanize(date('U'), TRUE)
+		];
+
+		$json_options = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
+
+		//
+		// Extraire tous les documents 
+		//
+
+		$this->db->where('efface', 0);
+
+		$query = $this->db->get($this->documents_t);
+
+        if ( ! $query->num_rows() > 0)
+             return 0;
+
+		$docs_sha256 = array_column($query->result_array(), 'doc_sha256');
+		$docs_sha256 = array_unique($docs_sha256);
+
+		//
+		// Extraire tous les documents a effacer
+		//
+		
+		$this->db->where('efface', 1);
+		$this->db->where('efface_epoch <', $epoch);
+
+		$query = $this->db->get($this->documents_t);
+
+        if ( ! $query->num_rows() > 0)
+             return 0;
+
+		$docs = $query->result_array();
+
+		$docs_a_supprimer = [];
+
+		foreach($docs as $d)
+		{
+			if (in_array($d['doc_sha256'], $docs_sha256))
+				continue;
+
+			$docs_a_supprimer[] = $d;
+		}
+
+		if (empty($docs_a_supprimer))
+			return 0;
+
+		//
+		// Supprimer les documents enseignants (des evaluations)
+		//
+
+		$s3Client = new S3Client([
+			'version' 		=> '2006-03-01',
+			'region' 		=> $this->config->item('region', 'amazon'),
+			'credentials' 	=> [
+				'key'    => $this->config->item('api_key', 'amazon'),
+				'secret' => $this->config->item('api_secret', 'amazon'),
+			]			
+		]);
+
+		$bucket = 'kovao';
+
+		$rapport_data = [
+			'documents_supprimes' => 0,
+			'erreurs_suppressions' => 0,
+			'documents' => []
+		];
+
+		$taille_supprimee = 0;
+
+		$doc_ids_supprimes = [];
+
+		foreach($docs_a_supprimer as $d)
+		{
+			if ( ! $d['s3'])
+				continue;
+
+			try 
+			{
+				if ($s3Client->doesObjectExist($bucket, 'evaluations/' . $d['doc_filename'])) 
+				{
+					$result = $s3Client->deleteObject([
+						'Bucket' => $bucket,
+						'Key'    => 'evaluations/' . $d['doc_filename'], // Nom exact du fichier dans S3
+					]);
+
+					$taille_supprimee += $d['doc_filesize'];
+				}
+
+				$doc_ids_supprimes[] = $d['doc_id'];
+			}
+			catch (Aws\S3\Exception\S3Exception $e)
+			{
+				echo 'E'; 
+				
+				$rapport_data['erreurs_suppressions']++;
+
+				$rapport_data['documents'][] = [
+					'doc_id'	   => $d['doc_id'],	
+					'question_id'  => $d['question_id'],
+					'doc_filename' => $d['doc_filename'],
+					'doc_sha256'   => $d['doc_sha256'],
+					'doc_filesize' => $d['doc_filesize'],
+					'erreur'	   => 1
+				];
+
+				continue;
+			}
+
+			$rapport_data['documents'][] = [
+				'doc_id'	   => $d['doc_id'],	
+				'question_id'  => $d['question_id'],
+				'doc_filename' => $d['doc_filename'],
+				'doc_sha256'   => $d['doc_sha256'],
+				'doc_filesize' => $d['doc_filesize']
+			];
+
+			$rapport_data['documents_supprimes']++;
+
+			echo '.';
+		}
+
+		$this->db->where_in('doc_id', $doc_ids_a_supprimer);
+		$this->db->delete($this->documents_t);
+
+		$rapport_data['taille_supprimee'] = $taille_supprimee;
+		$rapport['data'] = json_encode($rapport_data, $json_options);
+
+		$this->db->insert('rapports_maintenance', $rapport);
+
+		exit;
+	}
 
     /* --------------------------------------------------------------------------------------------
      *

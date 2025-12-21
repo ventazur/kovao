@@ -182,7 +182,7 @@ class Cli extends CI_Controller
 
     /* ------------------------------------------------------------------------
      *
-     * purger_documents
+     * purger_documents_enseignants
      *
      * ------------------------------------------------------------------------
      *
@@ -191,9 +191,9 @@ class Cli extends CI_Controller
      * autrement, il y aura affichage de ce qui aurait du etre efface.
      *
      * ------------------------------------------------------------------------ */
-    public function purger_documents($effacement = 0)
+    public function purger_documents_enseignants()
     {
-        echo $this->Cli_model->purger_documents($effacement);
+        echo $this->Cli_model->purger_documents_enseignants();
     }
 
     /* ------------------------------------------------------------------------
@@ -210,17 +210,6 @@ class Cli extends CI_Controller
     {
         echo $this->Cli_model->purger_items();
 	}
-
-    /* ------------------------------------------------------------------------
-     *
-     * purger_suppressions
-     *
-     * ------------------------------------------------------------------------
-     *
-     * Cette function sert a purger les traces expirees.
-     *
-     * ------------------------------------------------------------------------ */
-
 
     /* ------------------------------------------------------------------------
      *
