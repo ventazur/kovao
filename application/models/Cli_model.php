@@ -442,7 +442,7 @@ class Cli_model extends CI_Model
 			echo '.';
 		}
 
-		$this->db->where_in('doc_id', $doc_ids_a_supprimer);
+		$this->db->where_in('doc_id', $doc_ids_supprimes);
 		$this->db->delete($this->documents_t);
 
 		$rapport_data['taille_supprimee'] = $taille_supprimee;
