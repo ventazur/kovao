@@ -293,8 +293,14 @@ class Cli_model extends CI_Model
 
     /* --------------------------------------------------------------------------------------------
      *
-     * Purger les documents des enseignants
-     *
+	 * Purger les documents des enseignants
+	 *
+	 * --------------------------------------------------------------------------------------------
+	 *
+	 * Un meme document peut etre utilise dans plusieurs evaluations appartenant a des 
+	 * enseignants differents. Il faut donc faire attention a ne pas supprimer le fichier sur
+	 * le disque/S3 car il pourrait etre encore utilise.
+	 *
      * -------------------------------------------------------------------------------------------- */
 	function purger_documents_enseignants($jours = 180)
 	{
@@ -324,10 +330,16 @@ class Cli_model extends CI_Model
 			'date'   => date_humanize(date('U'), TRUE)
 		];
 
+		$rapport_data = [
+			'documents_supprimes' => 0,
+			'erreurs_suppressions' => 0,
+			'documents' => []
+		];
+
 		$json_options = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
 
 		//
-		// Extraire tous les documents 
+		// Extraire les empreintes (sha256) de tous les documents existants
 		//
 
 		$this->db->where('efface', 0);
@@ -341,7 +353,7 @@ class Cli_model extends CI_Model
 		$docs_sha256 = array_unique($docs_sha256);
 
 		//
-		// Extraire tous les documents a effacer
+		// Extraire tous les documents a effacer respectant le critere d'expiration en jours
 		//
 		
 		$this->db->where('efface', 1);
@@ -353,6 +365,11 @@ class Cli_model extends CI_Model
              return 0;
 
 		$docs = $query->result_array();
+		$doc_ids = array_column($docs, 'doc_id');
+
+		//
+		// Determiner les documents dont il faut supprimer le fichier du disque/S3
+		//
 
 		$docs_a_supprimer = [];
 
@@ -363,9 +380,6 @@ class Cli_model extends CI_Model
 
 			$docs_a_supprimer[] = $d;
 		}
-
-		if (empty($docs_a_supprimer))
-			return 0;
 
 		//
 		// Supprimer les documents enseignants (des evaluations)
@@ -382,73 +396,80 @@ class Cli_model extends CI_Model
 
 		$bucket = 'kovao';
 
-		$rapport_data = [
-			'documents_supprimes' => 0,
-			'erreurs_suppressions' => 0,
-			'documents' => []
-		];
-
 		$taille_supprimee = 0;
 
 		$doc_ids_supprimes = [];
 
-		foreach($docs_a_supprimer as $d)
+		if ( ! empty($docs_a_supprimer))
 		{
-			if ( ! $d['s3'])
-				continue;
-
-			try 
+			foreach($docs_a_supprimer as $d)
 			{
-				if ($s3Client->doesObjectExist($bucket, 'evaluations/' . $d['doc_filename'])) 
+				if ( ! $d['s3'])
+					continue;
+
+				try 
 				{
-					$result = $s3Client->deleteObject([
-						'Bucket' => $bucket,
-						'Key'    => 'evaluations/' . $d['doc_filename'], // Nom exact du fichier dans S3
-					]);
+					if ($s3Client->doesObjectExist($bucket, 'evaluations/' . $d['doc_filename'])) 
+					{
+						$result = $s3Client->deleteObject([
+							'Bucket' => $bucket,
+							'Key'    => 'evaluations/' . $d['doc_filename'], // Nom exact du fichier dans S3
+						]);
 
-					$taille_supprimee += $d['doc_filesize'];
+						$taille_supprimee += $d['doc_filesize'];
+					}
+
+					$doc_ids_supprimes[] = $d['doc_id'];
 				}
+				catch (Aws\S3\Exception\S3Exception $e)
+				{
+					echo 'E'; 
+					
+					$rapport_data['erreurs_suppressions']++;
 
-				$doc_ids_supprimes[] = $d['doc_id'];
-			}
-			catch (Aws\S3\Exception\S3Exception $e)
-			{
-				echo 'E'; 
-				
-				$rapport_data['erreurs_suppressions']++;
+					$rapport_data['documents'][] = [
+						'doc_id'	   => $d['doc_id'],	
+						'question_id'  => $d['question_id'],
+						'doc_filename' => $d['doc_filename'],
+						'doc_sha256'   => $d['doc_sha256'],
+						'doc_filesize' => $d['doc_filesize'],
+						'erreur'	   => 1
+					];
+
+					continue;
+				}
 
 				$rapport_data['documents'][] = [
 					'doc_id'	   => $d['doc_id'],	
 					'question_id'  => $d['question_id'],
 					'doc_filename' => $d['doc_filename'],
 					'doc_sha256'   => $d['doc_sha256'],
-					'doc_filesize' => $d['doc_filesize'],
-					'erreur'	   => 1
+					'doc_filesize' => $d['doc_filesize']
 				];
 
-				continue;
+				$rapport_data['documents_supprimes']++;
+
+				echo '.';
 			}
+		} // ! empty $docs_a_supprimer
 
-			$rapport_data['documents'][] = [
-				'doc_id'	   => $d['doc_id'],	
-				'question_id'  => $d['question_id'],
-				'doc_filename' => $d['doc_filename'],
-				'doc_sha256'   => $d['doc_sha256'],
-				'doc_filesize' => $d['doc_filesize']
-			];
+		//
+		// Effacer les lignes de tous les documents a supprimer
+		//
 
-			$rapport_data['documents_supprimes']++;
-
-			echo '.';
-		}
-
-		$this->db->where_in('doc_id', $doc_ids_supprimes);
+		$this->db->where_in('doc_id', $doc_ids);
 		$this->db->delete($this->documents_t);
+
+		//
+		// Ecrire le rapport
+		//
 
 		$rapport_data['taille_supprimee'] = $taille_supprimee;
 		$rapport['data'] = json_encode($rapport_data, $json_options);
 
 		$this->db->insert('rapports_maintenance', $rapport);
+
+		echo "\n";
 
 		exit;
 	}
