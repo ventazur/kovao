@@ -542,6 +542,8 @@ class Cli_model extends CI_Model
 		// Supprimer les documents etudiants (des soumissions)
 		//
 
+		echo 'Suppression de ' . count($docs) . ' documents effacés avant le ' . date_humanize($epoch) . "\n";
+
 		$s3Client = new S3Client([
 			'version' 		=> '2006-03-01',
 			'region' 		=> $this->config->item('region', 'amazon'),
