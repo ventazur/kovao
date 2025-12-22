@@ -527,7 +527,6 @@ class Cli_model extends CI_Model
 		$this->db->where('efface_epoch <', $epoch);
 
 		$query = $this->db->get($this->documents_etudiants_t);
-		$query = $this->db->get($this->documents_etudiants_t);
 
         if ( ! $query->num_rows() > 0)
              return 0;
