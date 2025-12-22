@@ -186,15 +186,27 @@ class Cli extends CI_Controller
      *
      * ------------------------------------------------------------------------
      *
-     * Cette function sert a purger les documents effaces.
-     * L'argument '$effacement' doit etre a 1 pour vraiment effacer les fichiers,
-     * autrement, il y aura affichage de ce qui aurait du etre efface.
+     * Cette function sert a purger les documents effaces des evaluations.
      *
      * ------------------------------------------------------------------------ */
     public function purger_documents_enseignants()
     {
         echo $this->Cli_model->purger_documents_enseignants();
     }
+
+    /* ------------------------------------------------------------------------
+     *
+     * purger_documents_etudiants
+     *
+     * ------------------------------------------------------------------------
+     *
+     * Cette function sert a purger les documents effaces des soumissions.
+     *
+     * ------------------------------------------------------------------------ */
+    public function purger_documents_etudiants()
+    {
+        echo $this->Cli_model->purger_documents_etudiants();
+	}
 
     /* ------------------------------------------------------------------------
      *

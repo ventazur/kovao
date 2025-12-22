@@ -476,12 +476,174 @@ class Cli_model extends CI_Model
 
     /* --------------------------------------------------------------------------------------------
      *
+	 * Purger les documents des etudiants (soumissions)
+	 *
+	 * --------------------------------------------------------------------------------------------
+	 *
+	 * Les documents sont accompagnes de leur 'thumbnail' qu'il faut egalement supprimer.
+	 *
+     * -------------------------------------------------------------------------------------------- */
+	function purger_documents_etudiants($jours = 30)
+	{
+		try 
+		{
+			$maintenant = new DateTimeImmutable();
+			$intervalle = new DateInterval('P' . $jours . 'D'); // P180D
+
+			$date_passee = $maintenant->sub($intervalle);
+
+			$epoch = $date_passee->getTimestamp();
+		} 
+		catch (Exception $e) 
+		{
+			exit(9);
+		}
+
+		//
+		// Preparer le rapport
+		//
+
+		$rapport = [
+			'cli' 	 => 1,
+			'erreur' => 0,
+			'action' => 'purger_documents_etudiants',
+			'epoch'  => date('U'),
+			'date'   => date_humanize(date('U'), TRUE)
+		];
+
+		$rapport_data = [
+			'documents_supprimes' => 0,
+			'erreurs_suppressions' => 0,
+			'documents' => []
+		];
+
+		$json_options = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
+
+		//
+		// Extraire tous les documents a effacer respectant le critere d'expiration en jours
+		//
+		
+		$this->db->where('efface', 1);
+		$this->db->where('efface_epoch <', $epoch);
+
+		$query = $this->db->get($this->documents_etudiants_t);
+		$query = $this->db->get($this->documents_etudiants_t);
+
+        if ( ! $query->num_rows() > 0)
+             return 0;
+
+		$docs = $query->result_array();
+		$doc_ids = array_column($docs, 'doc_id');
+
+		//
+		// Supprimer les documents etudiants (des soumissions)
+		//
+
+		$s3Client = new S3Client([
+			'version' 		=> '2006-03-01',
+			'region' 		=> $this->config->item('region', 'amazon'),
+			'credentials' 	=> [
+				'key'    => $this->config->item('api_key', 'amazon'),
+				'secret' => $this->config->item('api_secret', 'amazon'),
+			]			
+		]);
+
+		$bucket = 'kovao';
+
+		$taille_supprimee = 0;
+
+		foreach($docs as $d)
+		{
+			if ( ! $d['s3'])
+				continue;
+
+			try 
+			{
+				if ($s3Client->doesObjectExist($bucket, 'soumissions/' . $d['doc_filename'])) 
+				{
+					$result = $s3Client->deleteObject([
+						'Bucket' => $bucket,
+						'Key'    => 'soumissions/' . $d['doc_filename'], // Nom exact du fichier dans S3
+					]);
+
+					$taille_supprimee += $d['doc_filesize'];
+				}
+
+				if ($s3Client->doesObjectExist($bucket, 'soumissions/' . $d['doc_tn_filename'])) 
+				{
+					$result = $s3Client->deleteObject([
+						'Bucket' => $bucket,
+						'Key'    => 'soumissions/' . $d['doc_filename'], // Nom exact du fichier dans S3
+					]);
+
+					$taille_supprimee += $d['doc_tn_filesize'];
+				}
+
+			}
+			catch (Aws\S3\Exception\S3Exception $e)
+			{
+				echo 'E'; 
+				
+				$rapport_data['erreurs_suppressions']++;
+
+				$rapport_data['documents'][] = [
+					'doc_id'	   	  => $d['doc_id'],	
+					'question_id'  	  => $d['question_id'],
+					'doc_filename' 	  => $d['doc_filename'],
+					'doc_tn_filename' => $d['doc_tn_filename'],
+					'doc_sha256_file' => $d['doc_sha256_file'],
+					'doc_filesize'    => $d['doc_filesize'],
+					'doc_tn_filesize' => $d['doc_tn_filesize'],
+					'erreur'	      => 1
+				];
+
+				continue;
+			}
+
+			$rapport_data['documents'][] = [
+				'doc_id'	      => $d['doc_id'],	
+				'question_id'     => $d['question_id'],
+				'doc_filename'    => $d['doc_filename'],
+				'doc_tn_filename' => $d['doc_filename'],
+				'doc_sha256_file' => $d['doc_sha256_file'],
+				'doc_filesize'    => $d['doc_filesize'],
+				'doc_tn_filesize' => $d['doc_tn_filesize']
+			];
+
+			$rapport_data['documents_supprimes']++;
+
+			echo '.';
+		}
+
+		//
+		// Effacer les lignes de tous les documents a supprimer
+		//
+
+		$this->db->where_in('doc_id', $doc_ids);
+		$this->db->delete($this->documents_etudiants_t);
+
+		//
+		// Ecrire le rapport
+		//
+
+		$rapport_data['taille_supprimee'] = $taille_supprimee;
+		$rapport['data'] = json_encode($rapport_data, $json_options);
+
+		$this->db->insert('rapports_maintenance', $rapport);
+
+		echo "\n";
+
+		exit;
+	}
+
+    /* --------------------------------------------------------------------------------------------
+     *
      * Purger les documents (images) effaces des evaluations 
      *
      * version 4 (2020-10-17)
      *
      * -------------------------------------------------------------------------------------------- */
-    function purger_documents($effacement, $expiration_jours = 0)
+    function OBSOLETE_purger_documents($effacement, $expiration_jours = 0)
     {
         //
         // (!)
