@@ -384,6 +384,8 @@ class Cli_model extends CI_Model
 		//
 		// Supprimer les documents enseignants (des evaluations)
 		//
+		
+		echo 'Suppression de ' . count($docs_a_supprimer) . ' documents effacés avant le ' . date_humanize($epoch) . "\n";
 
 		$s3Client = new S3Client([
 			'version' 		=> '2006-03-01',
@@ -461,8 +463,14 @@ class Cli_model extends CI_Model
 		// Effacer les lignes de tous les documents a supprimer
 		//
 
-		$this->db->where_in('doc_id', $doc_ids);
-		$this->db->delete($this->documents_t);
+		$chunk_size = 500;
+		$chunks = array_chunk($doc_ids, $chunk_size);
+
+		foreach($chunks as $c)
+		{	
+			$this->db->where_in('doc_id', $c);
+			$this->db->delete($this->documents_t);
+		}
 
 		//
 		// Ecrire le rapport
@@ -582,7 +590,7 @@ class Cli_model extends CI_Model
 				{
 					$result = $s3Client->deleteObject([
 						'Bucket' => $bucket,
-						'Key'    => 'soumissions/' . $d['doc_filename'], // Nom exact du fichier dans S3
+						'Key'    => 'soumissions/' . $d['doc_tn_filename'], // Nom exact du fichier dans S3
 					]);
 
 					$taille_supprimee += $d['doc_tn_filesize'];
@@ -628,8 +636,14 @@ class Cli_model extends CI_Model
 		// Effacer les lignes de tous les documents a supprimer
 		//
 
-		$this->db->where_in('doc_id', $doc_ids);
-		$this->db->delete($this->documents_etudiants_t);
+		$chunk_size = 500;
+		$chunks = array_chunk($doc_ids, $chunk_size);
+
+		foreach($chunks as $c)
+		{	
+			$this->db->where_in('doc_id', $c);
+			$this->db->delete($this->documents_etudiants_t);
+		}
 
 		//
 		// Ecrire le rapport
