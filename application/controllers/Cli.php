@@ -189,9 +189,9 @@ class Cli extends CI_Controller
      * Cette function sert a purger les documents effaces des evaluations.
      *
      * ------------------------------------------------------------------------ */
-    public function purger_documents_enseignants()
+    public function purger_documents_enseignants($jours = 180)
     {
-        echo $this->Cli_model->purger_documents_enseignants();
+        echo $this->Cli_model->purger_documents_enseignants($jours);
     }
 
     /* ------------------------------------------------------------------------
@@ -203,9 +203,9 @@ class Cli extends CI_Controller
      * Cette function sert a purger les documents effaces des soumissions.
      *
      * ------------------------------------------------------------------------ */
-    public function purger_documents_etudiants()
+    public function purger_documents_etudiants($jours = 30)
     {
-        echo $this->Cli_model->purger_documents_etudiants();
+        echo $this->Cli_model->purger_documents_etudiants($jours);
 	}
 
     /* ------------------------------------------------------------------------
