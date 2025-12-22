@@ -407,6 +407,10 @@ class Cli_model extends CI_Model
 				if ( ! $d['s3'])
 					continue;
 
+				// surete
+				if ( ! $d['efface'])
+					continue;
+
 				try 
 				{
 					if ($s3Client->doesObjectExist($bucket, 'evaluations/' . $d['doc_filename'])) 
@@ -554,6 +558,10 @@ class Cli_model extends CI_Model
 		foreach($docs as $d)
 		{
 			if ( ! $d['s3'])
+				continue;
+
+			// surete
+			if ( ! $d['efface'])
 				continue;
 
 			try 
