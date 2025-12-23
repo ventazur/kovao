@@ -580,7 +580,7 @@ class Cli_model extends CI_Model
 				{
 					$result = $s3Client->deleteObject([
 						'Bucket' => $bucket,
-						'Key'    => 'soumissions/' . $d['doc_filename'], // Nom exact du fichier dans S3
+						'Key'    => 'soumissions/' . $d['doc_filename'],
 					]);
 
 					$taille_supprimee += $d['doc_filesize'];
@@ -590,7 +590,7 @@ class Cli_model extends CI_Model
 				{
 					$result = $s3Client->deleteObject([
 						'Bucket' => $bucket,
-						'Key'    => 'soumissions/' . $d['doc_tn_filename'], // Nom exact du fichier dans S3
+						'Key'    => 'soumissions/' . $d['doc_tn_filename'], 
 					]);
 
 					$taille_supprimee += $d['doc_tn_filesize'];
@@ -661,242 +661,167 @@ class Cli_model extends CI_Model
 
     /* --------------------------------------------------------------------------------------------
      *
-     * Purger les documents (images) effaces des evaluations 
-     *
-     * version 4 (2020-10-17)
+	 * Nettoyer S3 documents enseignants (evaluations)
+	 *
+	 * ---------------------------------------------------------------------------------------------
+	 *
+	 * Cette fonction liste tous les objets dans le bucket S3 evaluations/ et determine le nombre
+	 * d'objets ayant une entree dans la base de donnees.
+	 *
+	 * Les objets introuvables sont supprimes.
      *
      * -------------------------------------------------------------------------------------------- */
-    function OBSOLETE_purger_documents($effacement, $expiration_jours = 0)
-    {
-        //
-        // (!)
-        // Cette fonction semble purger des documents qu'il ne faut pas purger.
-        // Pourtant, elle a ete en production pendant plusieurs mois et je n'ai rien perdu.
-        //
-        // Il est suggere de la verifier ou d'utiliser une fonction plus conservatrice qui
-        // est Document_model->documents_superflus()
-        //
-        
-        exit;
+    function nettoyer_s3_documents_enseignants()
+	{
+		$s3Client = new S3Client([
+			'version' 		=> '2006-03-01',
+			'region' 		=> $this->config->item('region', 'amazon'),
+			'credentials' 	=> [
+				'key'    => $this->config->item('api_key', 'amazon'),
+				'secret' => $this->config->item('api_secret', 'amazon'),
+			]			
+		]);
 
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		$results = $s3Client->getPaginator('ListObjectsV2', [
+			'Bucket' => 'kovao',
+			'Prefix' => 'evaluations/',
+		]);
 
-        //
-        // Ces documents sont en realite des images
-        //
+		$count_trouve = 0;
+		$count_introuvable = 0;
 
-        $effacements_documents = 0;
-        $effacements_fichiers  = 0;
+		foreach ($results as $result) 
+		{
+			if (isset($result['Contents'])) 
+			{
+				foreach ($result['Contents'] as $object)
+				{
+					$key = $object['Key']; // "soumissions/dev_e1g1s_1629838576_ojcrqv.jpe"
 
-        $expiration = 60*60*24 * $expiration_jours; // 60*60*24*30; // 30 jours
+					if (preg_match('/_tn\./', $key))
+						continue;
 
-        //
-        // Extraire les documents a effacer (et expire selon le parametre)
-        //
+					$parts = pathinfo($key);
 
-        $this->db->from  ('documents');
-        $this->db->where ('efface', 1);
-        $this->db->where ('efface_epoch <', date('U') - $expiration);
+					$doc_filename = basename($key);
+					$doc_tn_filename = $parts['filename'] . '_tn.' . $parts['extension'];
 
-        $query = $this->db->get();
-        
-        if ( ! $query->num_rows() > 0)
-        {
-            return 'Aucun document à effacer.';
-        }
+					// Chercher le fichier dans documents_etudiants
 
-        $documents_a_effacer = $query->result_array();
-        $documents_a_effacer = array_keys_swap($documents_a_effacer, 'doc_id');
+					$this->db->where('efface', 0);
+					$this->db->where('doc_filename', $doc_filename);
 
-        //
-        // Extraire tous les documents qui ne sont pas a effacer
-        //
+					$query = $this->db->get($this->documents_t);
 
-        $documents = array();
+					if ( ! $query->num_rows() > 0)
+					{
+						// Introuvable
 
-        $this->db->from  ('documents');
-        $this->db->where ('efface', 0);
+						$count_introuvable++;
+						echo $doc_filename . ' introuvable' . PHP_EOL;
 
-        $query = $this->db->get();
-        
-        if ($query->num_rows() > 0)
-        {
-            $documents = array_keys_swap($documents, 'doc_id');
-        }
+						//
+						// Suppression de l'objet introuvable et de son thumbnail si existant
+						//
+						
+						// @TODO
 
-        $document_ids = array_keys($documents);
+						continue;
+					}
 
-        //
-        // Extraire toutes les soumissions
-        //
+					// Trouve !
 
-        $soumissions = $this->Evaluation_model->extraire_toutes_soumissions();
+					$count_trouve++;
+					echo $count_trouve . ' --- ' . $doc_filename . ' TROUVE!' . PHP_EOL;
+				}
+			}
+		}
 
-        //
-        // Determiner les fichiers a conserver
-        //
-        // 1. Les documents utilisant ces fichiers
-        // 2. Les soumissions utilisant ces fichiers
-        //
-    
-        $fichiers_sha256_a_conserver = array(); // pour les documents et soumissions
-        $fichiers_noms_a_conserver   = array(); // pour les soumissions (retrocompatibilite)
+		echo $count_trouve . ' trouves' . "\n";
+		echo $count_introuvable . ' introuvables' . "\n";
+	}
 
-        // 1. Les documents utilisant ces fichiers
+    /* --------------------------------------------------------------------------------------------
+     *
+	 * Nettoyer S3 documents etudiants
+	 *
+	 * ---------------------------------------------------------------------------------------------
+	 *
+	 * Cette fonction liste tous les objets dans le bucket S3 soumissions/ et determine le nombre
+	 * d'objets ayant une entree dans la base de donnees.
+	 *
+	 * Les objets introuvables sont supprimes.
+     *
+     * -------------------------------------------------------------------------------------------- */
+    function nettoyer_s3_documents_etudiants()
+	{
+		$s3Client = new S3Client([
+			'version' 		=> '2006-03-01',
+			'region' 		=> $this->config->item('region', 'amazon'),
+			'credentials' 	=> [
+				'key'    => $this->config->item('api_key', 'amazon'),
+				'secret' => $this->config->item('api_secret', 'amazon'),
+			]			
+		]);
 
-        foreach($documents as $d)
-        {
-            if ( ! in_array($d['doc_sha256'], $fichiers_sha256_a_conserver))
-            {
-                $fichiers_sha256_a_conserver[] = $d['doc_sha256'];
-            }    
-        }
+		$results = $s3Client->getPaginator('ListObjectsV2', [
+			'Bucket' => 'kovao',
+			'Prefix' => 'soumissions/',
+		]);
 
-        // 2. Les soumissions utilisant ces fichiers
-        
-        if ( ! empty($soumissions))
-        {
-            foreach($soumissions as $s)
-            {
-                if (empty($s['images_data_gz']))
-                    continue;
+		$count_trouve = 0;
+		$count_introuvable = 0;
 
-                $images = json_decode(gzuncompress($s['images_data_gz']), TRUE);
+		foreach ($results as $result) 
+		{
+			if (isset($result['Contents'])) 
+			{
+				foreach ($result['Contents'] as $object)
+				{
+					$key = $object['Key']; // "soumissions/dev_e1g1s_1629838576_ojcrqv.jpe"
 
-                if (empty($images) || ! is_array($images))
-                {
-                    continue;
-                }
+					if (preg_match('/_tn\./', $key))
+						continue;
 
-                foreach($images as $i)
-                {
-                    // Par precaution et pour retrocompatibilite, ne pas effacer les documents avant l'instauration des empreintes
-                    // (quelques documents seulement, ce qui ne devrait pas affecter l'espace utilise).
-                    // Il faut utiliser le nom du fichier pour detecter ces fichiers.
+					$parts = pathinfo($key);
 
-                    if ( ! array_key_exists('doc_sha256', $i) || empty($i['doc_sha256']))
-                    {
-                        if ( ! in_array($i['doc_filename'], $fichiers_noms_a_conserver))
-                        {
-                            $fichiers_noms_a_conserver[] = $i['doc_filename'];
-                        }
+					$doc_filename = basename($key);
+					$doc_tn_filename = $parts['filename'] . '_tn.' . $parts['extension'];
 
-                        continue;
-                    }
+					// Chercher le fichier dans documents_etudiants
 
-                    if ( ! in_array($i['doc_sha256'], $fichiers_sha256_a_conserver))
-                    {
-                        $fichiers_sha256_a_conserver[] = $i['doc_sha256'];
-                    }
-                }
-            }
-        }
+					$this->db->where('efface', 0);
+					$this->db->where('doc_filename', $doc_filename);
 
-        //
-        // 3. Effacer les documents et fichiers
-        //
+					$query = $this->db->get($this->documents_etudiants_t);
 
-        $this->db->trans_begin();
+					if ( ! $query->num_rows() > 0)
+					{
+						// Introuvable
 
-        $fichiers_a_effacer = array();
-        $taille_liberee     = 0;
+						$count_introuvable++;
+						echo $doc_filename . ' introuvable' . PHP_EOL;
 
-        foreach($documents_a_effacer as $doc_id => $doc)
-        {
-            //
-            // Effacement de l'entree dans la base de donnees
-            //
+						//
+						// Suppression de l'objet introuvable et de son thumbnail si existant
+						//
+						
+						// @TODO
 
-            if ($effacement == 1)
-            {
-                $this->db->where ('doc_id', $doc_id);
-                $this->db->where ('efface', 1);
-                $this->db->delete('documents');
+						continue;
+					}
 
-                $effacements_documents++;
-            }
+					// Trouve !
 
-            //
-            // Est-ce qu'il faut conserver le fichier?
-            //
+					$count_trouve++;
+					echo $count_trouve . ' --- ' . $doc_filename . ' TROUVE!' . PHP_EOL;
+				}
+			}
+		}
 
-            if (in_array($doc['doc_sha256'], $fichiers_sha256_a_conserver))
-            {
-                continue;
-            }
-
-            if (in_array($doc['doc_filename'], $fichiers_noms_a_conserver))
-            {
-                continue;
-            }    
-
-            $fichiers_a_effacer[] = $doc['doc_filename'];
-
-            //
-            // Effacement du fichier sur le disque
-            // 
-
-            if ($effacement == 1)
-            {
-                // Ne pas effacer les anciens fichiers (sans empreinte) present dans les soumissions.
-                // Le nom du fichier est la seule facon de les detecter.
-
-                /*
-                if ($doc['s4'])
-                {
-                    if ( ! $this->Document_model->_effacer_s3(array('dossier' => 'evaluations', 'key' => $doc['doc_filename'])))
-                    {
-                        $this->db->trans_rollback();
-                        return "Ce fichier ne peut être effacé de S3.";
-                    }
-                    else
-                    {
-                        $effacements_fichiers++;
-                    }
-                }
-                else
-                {
-                    if ( ! empty($doc['doc_filename']) && file_exists(FCPATH . $this->config->item('documents_path') . $doc['doc_filename']))
-                    {
-                        if ( ! unlink(FCPATH . $this->config->item('documents_path') . $doc['doc_filename']))
-                        {
-                            $this->db->trans_rollback();
-                            return "Ce fichier ne peut être effacé. Vérifier les permissions du système de fichiers.";
-                        }
-                        else
-                        {
-                            $effacements_fichiers++;
-                        }
-                    }
-                }
-                */
-
-            } // effacement == 1
-        }
-
-        $this->db->trans_commit();
-
-        if ($effacement == 1)
-        {
-            $str = $effacements_documents . ' document' . ($effacements_documents > 1 ? 's' : '') . ', ' 
-                    . $effacements_fichiers . ' fichier' . ($effacements_fichiers > 1 ? 's' : '');
-        }
-        else
-        {
-            $fichiers_a_effacer = array_unique($fichiers_a_effacer);
-
-            $str  = count($documents_a_effacer) . ' document(s) à effacer de la base de données';
-            $str .= "\n";
-            $str .= count($fichiers_a_effacer) . ' fichier(s) à effacer du disque ou de S3';
-            $str .= "\n";
-            $str .= 'Emplacement : ' . FCPATH . $this->config->item('documents_path');
-            $str .= "\n";
-
-            p($fichiers_a_effacer);
-        }
-
-        return $str;
-    }
+		echo $count_trouve . ' trouves' . "\n";
+		echo $count_introuvable . ' introuvables' . "\n";
+	}
 
     /* --------------------------------------------------------------------------------------------
      *
