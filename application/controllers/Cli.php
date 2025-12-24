@@ -189,9 +189,9 @@ class Cli extends CI_Controller
      * Cette function sert a purger les documents effaces des evaluations.
      *
      * ------------------------------------------------------------------------ */
-    public function purger_documents_enseignants($jours = 180)
+    public function purger_documents_enseignants($effacement = 0, $jours = 180)
     {
-        echo $this->Cli_model->purger_documents_enseignants($jours);
+        echo $this->Cli_model->purger_documents_enseignants($effacement, $jours);
     }
 
     /* ------------------------------------------------------------------------
@@ -210,30 +210,18 @@ class Cli extends CI_Controller
 
     /* ------------------------------------------------------------------------
      *
-     * nettoyer s3 documents enseignants
+     * nettoyer s3 documents
      *
      * ------------------------------------------------------------------------
      *
-     * 
+	 * Cette fonction extrait la liste de tous les objets S3, determine ceux
+	 * qui ne sont plus neecessaires (qui ne sont pas dans la base de donnees) 
+	 * et les suppriment. 
      *
      * ------------------------------------------------------------------------ */
-    public function nettoyer_s3_documents_enseignants()
+    public function nettoyer_s3_documents($repertoire = 'evaluations')
     {
-        echo $this->Cli_model->nettoyer_s3_documents_enseignants();
-	}
-
-    /* ------------------------------------------------------------------------
-     *
-     * nettoyer s3 documents etudiants
-     *
-     * ------------------------------------------------------------------------
-     *
-     * 
-     *
-     * ------------------------------------------------------------------------ */
-    public function nettoyer_s3_documents_etudiants()
-    {
-        echo $this->Cli_model->nettoyer_s3_documents_etudiants();
+        $this->Cli_model->nettoyer_s3_documents($repertoire);
 	}
 
     /* ------------------------------------------------------------------------
@@ -242,34 +230,13 @@ class Cli extends CI_Controller
      *
      * ------------------------------------------------------------------------
      *
-     * Cette function sert a purger les items effaces:
-     * evaluations, blocs, variables, questions et reponses
+     * Cette function sert a purger les items effaces.
      *
      * ------------------------------------------------------------------------ */
     public function purger_items()
     {
         echo $this->Cli_model->purger_items();
 	}
-
-    /* ------------------------------------------------------------------------
-     *
-     * modifier_table_activite
-     *
-     * ------------------------------------------------------------------------
-     *
-     * Cette function sert a modifier la table activite afin de mettre a jour
-     * les champs 'annee', 'mois', 'jour', 'heure', 'minute' qui servent
-     * a generer des statistiques de frequentation du site.
-     *
-     * La table ete modifiee mais cette function pourrait etre utilise
-     * eventuellement, si les modifications ne sont pas faites a chaque requete
-     * de l'utilisateur pour gagner des microsecondes.
-     *
-     * ------------------------------------------------------------------------ */
-    public function modifier_table_activite()
-    {
-        // return $this->Admin_model->activite_modifier_table();
-    }
 
     /* ------------------------------------------------------------------------
      *

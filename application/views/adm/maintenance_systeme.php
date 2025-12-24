@@ -42,8 +42,8 @@
 </div>
 
 <ul>
-    <li><a class="lien" target="_blank" href="<?= base_url() . 'admin/detecter_documents_superflus'; ?>">Détecter les documents superflus (à effacer) [des évaluations]</a></li>
-    <li><a class="lien" target="_blank" href="<?= base_url() . 'admin/detecter_documents_superflus_soumissions'; ?>">Détecter les documents superflus des étudiants (à effacer) [des soumissions]</a></li>
+    <li>[OBSOLETE] <a class="lien" target="_blank" href="<?= base_url() . 'admin/detecter_documents_superflus'; ?>">Détecter les documents superflus (à effacer) [des évaluations]</a></li>
+    <li>[OBSOLETE] <a class="lien" target="_blank" href="<?= base_url() . 'admin/detecter_documents_superflus_soumissions'; ?>">Détecter les documents superflus des étudiants (à effacer) [des soumissions]</a></li>
 </ul>
 
 <ul>

@@ -109,56 +109,6 @@ class Admin_model extends CI_Model
 
     /* --------------------------------------------------------------------------------------------
      *
-     * Determiner l'identite de l'etudiant
-     *
-     * -------------------------------------------------------------------------------------------- 
-     *
-     * A partir des informations dans les temoins de connexion, determiner l'identite de
-     * l'etudiant. Cette identite a ete enregistree auparavant lors de la soumission d'une evaluation.
-     *
-     * -------------------------------------------------------------------------------------------- */
-    public function determiner_identite($output = 'str')
-    {
-        //
-        // $output peut etre 'string' ou 'array'
-        //
-
-        if ($this->logged_in)
-        {
-            // L'identite est deja connue car l'usager est inscrit au site.
-            return NULL;
-        }
-
-        $identite = NULL;
-
-        $etudiant_data = get_cookie('adata');
-
-        if (empty($etudiant_data))
-        {
-            return NULL;
-        }
-
-        $etudiant_serialized   = $this->encryption->decrypt($etudiant_data);
-        $etudiant_unserialized = (array) unserialize($etudiant_serialized);
-
-        // Ceci va permettre d'aller chercher precisement des informations sur le cours.
-  
-        $cours_data = (array) json_decode($etudiant_unserialized['cours_data']);
-
-        if ($output == 'array')
-        {
-            return $etudiant_unserialized;
-        }
-
-        return
-            html_entity_decode(@$etudiant_unserialized['prenom_nom']) . ';' .
-            @$etudiant_unserialized['numero_da'] . ';' .
-            @$cours_data['cours_code_court'] . ';' .
-            @$cours_data['semestre_code'];
-    }
-
-    /* --------------------------------------------------------------------------------------------
-     *
      * Enregistrer la derniere activite sur le site
      *
      * -------------------------------------------------------------------------------------------- */
@@ -226,13 +176,7 @@ class Admin_model extends CI_Model
         }
 
         //
-        // Identite de l'etudiant(e)
-        //
-
-        $identite = $this->determiner_identite();
-
-        //
-        // Generer un identifiant unique (tentative)
+        // Generer un identifiant unique
         //
 
         $unique_id = $this->generer_unique_id();
@@ -265,7 +209,7 @@ class Admin_model extends CI_Model
             'date'          => date_humanize($this->now_epoch, TRUE),
             'epoch'         => $this->now_epoch,
             'enseignant_id' => @$this->enseignant_id ?: NULL,
-            'etudiant_id'   => @$this->etudiant_id ?:  NULL,
+            'etudiant_id'   => @$this->etudiant_id ?: NULL,
             'ecole_id'      => @$this->ecole_id ?: 0,
             'groupe_id'     => @$this->groupe_id ?: 0,
             'semestre_id'   => @$this->semestre_id ?: NULL,
@@ -363,7 +307,6 @@ class Admin_model extends CI_Model
         if ( ! $query->num_rows() > 0)
         {
             return array(
-                // 'complete'     => array(),
                 'non_connectes' => array(),
                 'enseignants'   => array(),
                 'etudiants'     => array()
@@ -452,7 +395,7 @@ class Admin_model extends CI_Model
         }
 
         return $activites;
-    }
+	}
 
     /* --------------------------------------------------------------------------------------------
      *

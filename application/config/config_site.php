@@ -81,6 +81,7 @@ $config['ips_whitelist'] = array(
 
 $config['database_tables'] = array(
 //  clef                       nom de la table
+	'activite'				=> 'activite',
 	'documents'				=> 'documents',
 	'documents_etudiants'   => 'documents_etudiants',
     'ecoles'                => 'ecoles',

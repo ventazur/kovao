@@ -297,26 +297,24 @@ class Cli_model extends CI_Model
 	 *
 	 * --------------------------------------------------------------------------------------------
 	 *
-	 * Un meme document peut etre utilise dans plusieurs evaluations appartenant a des 
+	 * (!) Un meme document peut etre utilise dans plusieurs evaluations appartenant a des 
 	 * enseignants differents. Il faut donc faire attention a ne pas supprimer le fichier sur
 	 * le disque/S3 car il pourrait etre encore utilise.
 	 *
+	 * (!!) Un document (image) qui semble efface de toutes les evaluations pourraient se trouver
+	 *      encore utile dans les soumissions residuelles. Il ne faut pas les purger.
+	 *
+	 * $effacement est la surete
+	 *
      * -------------------------------------------------------------------------------------------- */
-	function purger_documents_enseignants($jours = 180)
+	function purger_documents_enseignants($effacement = 0, $jours = 180)
 	{
-		try 
-		{
-			$maintenant = new DateTimeImmutable();
-			$intervalle = new DateInterval('P' . $jours . 'D'); // P180D
+		$maintenant = new DateTimeImmutable();
+		$intervalle = new DateInterval('P' . $jours . 'D'); // P180D
 
-			$date_passee = $maintenant->sub($intervalle);
+		$date_passee = $maintenant->sub($intervalle);
 
-			$epoch = $date_passee->getTimestamp();
-		} 
-		catch (Exception $e) 
-		{
-			exit(9);
-		}
+		$epoch = $date_passee->getTimestamp();
 
 		//
 		// Preparer le rapport
@@ -332,154 +330,167 @@ class Cli_model extends CI_Model
 
 		$rapport_data = [
 			'documents_supprimes' => 0,
-			'erreurs_suppressions' => 0,
-			'documents' => []
+			'fichiers_supprimes'  => 0,
+			'fichiers' => []
 		];
 
 		$json_options = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
 
 		//
-		// Extraire les empreintes (sha256) de tous les documents existants
+		// Extraire le nom des fichiers de tous les documents existants
 		//
+
+		$docs_fichiers = [];
 
 		$this->db->where('efface', 0);
 
 		$query = $this->db->get($this->documents_t);
 
-        if ( ! $query->num_rows() > 0)
-             return 0;
-
-		$docs_sha256 = array_column($query->result_array(), 'doc_sha256');
-		$docs_sha256 = array_unique($docs_sha256);
+		if ($query->num_rows() > 0)
+		{
+			$docs_fichiers = array_column($query->result_array(), 'doc_filename');
+			$docs_fichiers = array_unique($docs_fichiers);
+		}
 
 		//
 		// Extraire tous les documents a effacer respectant le critere d'expiration en jours
 		//
-		
+
+		$docs_effaces = [];
+
 		$this->db->where('efface', 1);
 		$this->db->where('efface_epoch <', $epoch);
 
 		$query = $this->db->get($this->documents_t);
 
-        if ( ! $query->num_rows() > 0)
-             return 0;
-
-		$docs = $query->result_array();
-		$doc_ids = array_column($docs, 'doc_id');
-
-		//
-		// Determiner les documents dont il faut supprimer le fichier du disque/S3
-		//
-
-		$docs_a_supprimer = [];
-
-		foreach($docs as $d)
+		if ($query->num_rows() > 0)
 		{
-			if (in_array($d['doc_sha256'], $docs_sha256))
-				continue;
-
-			$docs_a_supprimer[] = $d;
+			$docs_effaces = $query->result_array();
+			$docs_effaces_ids = array_column($docs_effaces, 'doc_id');
+			$docs_effaces_fichiers = array_column($query->result_array(), 'doc_filename');
+			$docs_effaces_fichiers = array_unique($docs_effaces_fichiers);
 		}
 
 		//
-		// Supprimer les documents enseignants (des evaluations)
+		// Extraire les images des soumissions
 		//
-		
-		echo 'Suppression de ' . count($docs_a_supprimer) . ' documents effacés avant le ' . date_humanize($epoch) . "\n";
 
-		$s3Client = new S3Client([
-			'version' 		=> '2006-03-01',
-			'region' 		=> $this->config->item('region', 'amazon'),
-			'credentials' 	=> [
-				'key'    => $this->config->item('api_key', 'amazon'),
-				'secret' => $this->config->item('api_secret', 'amazon'),
-			]			
-		]);
+		$soumissions = [];
+		$soumissions_images = [];
 
-		$bucket = 'kovao';
+		$this->db->where('efface', 0);
 
-		$taille_supprimee = 0;
+		$query = $this->db->get($this->soumissions_t);
 
-		$doc_ids_supprimes = [];
-
-		if ( ! empty($docs_a_supprimer))
+		if ($query->num_rows() > 0)
 		{
-			foreach($docs_a_supprimer as $d)
+			$soumissions = $query->result_array();
+		}
+
+		if ( ! empty($soumissions))
+		{
+			foreach($soumissions as $s)
 			{
-				if ( ! $d['s3'])
+                if (empty($s['images_data_gz']))
+                    continue;
+
+				$images = json_decode(gzuncompress($s['images_data_gz']), TRUE);
+
+                if (empty($images) || ! is_array($images))
 					continue;
 
-				// surete
-				if ( ! $d['efface'])
-					continue;
-
-				try 
+                foreach($images as $img)
 				{
-					if ($s3Client->doesObjectExist($bucket, 'evaluations/' . $d['doc_filename'])) 
+					$soumissions_images[] = $img['doc_filename'];
+                }
+			}
+		}
+
+		//
+		// Determiner les fichiers dont il faut supprimer le fichier du disque/S3
+		//
+
+		$fichiers_a_supprimer = [];
+
+		foreach($docs_effaces_fichiers as $f)
+		{
+			if (in_array($f, $docs_fichiers))
+				continue;
+
+			if (in_array($f, $soumissions_images))
+				continue;
+
+			$fichiers_a_supprimer[] = $f;
+		}
+
+		//
+		// Supprimer les fichiers
+		//
+
+		if ( ! empty($fichiers_a_supprimer))
+		{
+			echo 'Suppression de ' . count($fichiers_a_supprimer) . ' fichiers...' . "\n";
+
+			if ($effacement)
+			{
+				$s3Client = new S3Client([
+					'version' 		=> '2006-03-01',
+					'region' 		=> $this->config->item('region', 'amazon'),
+					'credentials' 	=> [
+						'key'    => $this->config->item('api_key', 'amazon'),
+						'secret' => $this->config->item('api_secret', 'amazon'),
+					]			
+				]);
+
+				$bucket = 'kovao';
+
+				foreach($fichiers_a_supprimer as $f)
+				{
+					if ($s3Client->doesObjectExist($bucket, 'evaluations/' . $f)) 
 					{
 						$result = $s3Client->deleteObject([
 							'Bucket' => $bucket,
-							'Key'    => 'evaluations/' . $d['doc_filename'], // Nom exact du fichier dans S3
+							'Key'    => 'evaluations/' . $f, 
 						]);
-
-						$taille_supprimee += $d['doc_filesize'];
 					}
 
-					$doc_ids_supprimes[] = $d['doc_id'];
+					$rapport_data['fichiers'][] = $f;
+					$rapport_data['fichiers_supprimes']++;
+
+					echo '.';
 				}
-				catch (Aws\S3\Exception\S3Exception $e)
-				{
-					echo 'E'; 
-					
-					$rapport_data['erreurs_suppressions']++;
-
-					$rapport_data['documents'][] = [
-						'doc_id'	   => $d['doc_id'],	
-						'question_id'  => $d['question_id'],
-						'doc_filename' => $d['doc_filename'],
-						'doc_sha256'   => $d['doc_sha256'],
-						'doc_filesize' => $d['doc_filesize'],
-						'erreur'	   => 1
-					];
-
-					continue;
-				}
-
-				$rapport_data['documents'][] = [
-					'doc_id'	   => $d['doc_id'],	
-					'question_id'  => $d['question_id'],
-					'doc_filename' => $d['doc_filename'],
-					'doc_sha256'   => $d['doc_sha256'],
-					'doc_filesize' => $d['doc_filesize']
-				];
-
-				$rapport_data['documents_supprimes']++;
-
-				echo '.';
-			}
-		} // ! empty $docs_a_supprimer
+			} // effacement
+		}
 
 		//
 		// Effacer les lignes de tous les documents a supprimer
 		//
 
-		$chunk_size = 500;
-		$chunks = array_chunk($doc_ids, $chunk_size);
+		echo 'Suppression de ' . count($docs_effaces) . ' documents effacés...' . "\n";
 
-		foreach($chunks as $c)
-		{	
-			$this->db->where_in('doc_id', $c);
-			$this->db->delete($this->documents_t);
+		if ($effacement)
+		{
+			$chunk_size = 500;
+			$chunks = array_chunk($docs_effaces_ids, $chunk_size);
+
+			foreach($chunks as $c)
+			{	
+				$this->db->where_in('doc_id', $c);
+				$this->db->delete($this->documents_t);
+			}
 		}
 
 		//
 		// Ecrire le rapport
 		//
 
-		$rapport_data['taille_supprimee'] = $taille_supprimee;
-		$rapport['data'] = json_encode($rapport_data, $json_options);
+		if ($effacement)
+		{
+			$rapport_data['taille_supprimee'] = $taille_supprimee;
+			$rapport['data'] = json_encode($rapport_data, $json_options);
 
-		$this->db->insert('rapports_maintenance', $rapport);
+			$this->db->insert('rapports_maintenance', $rapport);
+		}
 
 		echo "\n";
 
@@ -488,28 +499,26 @@ class Cli_model extends CI_Model
 
     /* --------------------------------------------------------------------------------------------
      *
-	 * Purger les documents des etudiants (soumissions)
+	 * Purger les documents des etudiants
 	 *
 	 * --------------------------------------------------------------------------------------------
 	 *
-	 * Les documents sont accompagnes de leur 'thumbnail' qu'il faut egalement supprimer.
+	 * Les documents des etudiants (table 'documents_etudiants') sont les televersements
+	 * des etudiants.
+	 *
+	 * Il faut purger les documents effaces de la table 'documents_etudiants'.
 	 *
      * -------------------------------------------------------------------------------------------- */
 	function purger_documents_etudiants($jours = 30)
 	{
-		try 
-		{
-			$maintenant = new DateTimeImmutable();
-			$intervalle = new DateInterval('P' . $jours . 'D'); // P180D
+		// Determiner la date la plus eloignee pour l'effacement
+		// base sur le nombre de jours de l'argument
 
-			$date_passee = $maintenant->sub($intervalle);
+		$maintenant = new DateTimeImmutable();
+		$intervalle = new DateInterval('P' . $jours . 'D'); // P180D
 
-			$epoch = $date_passee->getTimestamp();
-		} 
-		catch (Exception $e) 
-		{
-			exit(9);
-		}
+		$date_passee = $maintenant->sub($intervalle);
+		$epoch = $date_passee->getTimestamp();
 
 		//
 		// Preparer le rapport
@@ -657,170 +666,6 @@ class Cli_model extends CI_Model
 		echo "\n";
 
 		exit;
-	}
-
-    /* --------------------------------------------------------------------------------------------
-     *
-	 * Nettoyer S3 documents enseignants (evaluations)
-	 *
-	 * ---------------------------------------------------------------------------------------------
-	 *
-	 * Cette fonction liste tous les objets dans le bucket S3 evaluations/ et determine le nombre
-	 * d'objets ayant une entree dans la base de donnees.
-	 *
-	 * Les objets introuvables sont supprimes.
-     *
-     * -------------------------------------------------------------------------------------------- */
-    function nettoyer_s3_documents_enseignants()
-	{
-		$s3Client = new S3Client([
-			'version' 		=> '2006-03-01',
-			'region' 		=> $this->config->item('region', 'amazon'),
-			'credentials' 	=> [
-				'key'    => $this->config->item('api_key', 'amazon'),
-				'secret' => $this->config->item('api_secret', 'amazon'),
-			]			
-		]);
-
-		$results = $s3Client->getPaginator('ListObjectsV2', [
-			'Bucket' => 'kovao',
-			'Prefix' => 'evaluations/',
-		]);
-
-		$count_trouve = 0;
-		$count_introuvable = 0;
-
-		foreach ($results as $result) 
-		{
-			if (isset($result['Contents'])) 
-			{
-				foreach ($result['Contents'] as $object)
-				{
-					$key = $object['Key']; // "soumissions/dev_e1g1s_1629838576_ojcrqv.jpe"
-
-					if (preg_match('/_tn\./', $key))
-						continue;
-
-					$parts = pathinfo($key);
-
-					$doc_filename = basename($key);
-					$doc_tn_filename = $parts['filename'] . '_tn.' . $parts['extension'];
-
-					// Chercher le fichier dans documents_etudiants
-
-					$this->db->where('efface', 0);
-					$this->db->where('doc_filename', $doc_filename);
-
-					$query = $this->db->get($this->documents_t);
-
-					if ( ! $query->num_rows() > 0)
-					{
-						// Introuvable
-
-						$count_introuvable++;
-						echo $doc_filename . ' introuvable' . PHP_EOL;
-
-						//
-						// Suppression de l'objet introuvable et de son thumbnail si existant
-						//
-						
-						// @TODO
-
-						continue;
-					}
-
-					// Trouve !
-
-					$count_trouve++;
-					echo $count_trouve . ' --- ' . $doc_filename . ' TROUVE!' . PHP_EOL;
-				}
-			}
-		}
-
-		echo $count_trouve . ' trouves' . "\n";
-		echo $count_introuvable . ' introuvables' . "\n";
-	}
-
-    /* --------------------------------------------------------------------------------------------
-     *
-	 * Nettoyer S3 documents etudiants
-	 *
-	 * ---------------------------------------------------------------------------------------------
-	 *
-	 * Cette fonction liste tous les objets dans le bucket S3 soumissions/ et determine le nombre
-	 * d'objets ayant une entree dans la base de donnees.
-	 *
-	 * Les objets introuvables sont supprimes.
-     *
-     * -------------------------------------------------------------------------------------------- */
-    function nettoyer_s3_documents_etudiants()
-	{
-		$s3Client = new S3Client([
-			'version' 		=> '2006-03-01',
-			'region' 		=> $this->config->item('region', 'amazon'),
-			'credentials' 	=> [
-				'key'    => $this->config->item('api_key', 'amazon'),
-				'secret' => $this->config->item('api_secret', 'amazon'),
-			]			
-		]);
-
-		$results = $s3Client->getPaginator('ListObjectsV2', [
-			'Bucket' => 'kovao',
-			'Prefix' => 'soumissions/',
-		]);
-
-		$count_trouve = 0;
-		$count_introuvable = 0;
-
-		foreach ($results as $result) 
-		{
-			if (isset($result['Contents'])) 
-			{
-				foreach ($result['Contents'] as $object)
-				{
-					$key = $object['Key']; // "soumissions/dev_e1g1s_1629838576_ojcrqv.jpe"
-
-					if (preg_match('/_tn\./', $key))
-						continue;
-
-					$parts = pathinfo($key);
-
-					$doc_filename = basename($key);
-					$doc_tn_filename = $parts['filename'] . '_tn.' . $parts['extension'];
-
-					// Chercher le fichier dans documents_etudiants
-
-					$this->db->where('efface', 0);
-					$this->db->where('doc_filename', $doc_filename);
-
-					$query = $this->db->get($this->documents_etudiants_t);
-
-					if ( ! $query->num_rows() > 0)
-					{
-						// Introuvable
-
-						$count_introuvable++;
-						echo $doc_filename . ' introuvable' . PHP_EOL;
-
-						//
-						// Suppression de l'objet introuvable et de son thumbnail si existant
-						//
-						
-						// @TODO
-
-						continue;
-					}
-
-					// Trouve !
-
-					$count_trouve++;
-					echo $count_trouve . ' --- ' . $doc_filename . ' TROUVE!' . PHP_EOL;
-				}
-			}
-		}
-
-		echo $count_trouve . ' trouves' . "\n";
-		echo $count_introuvable . ' introuvables' . "\n";
 	}
 
     /* --------------------------------------------------------------------------------------------
@@ -989,7 +834,109 @@ class Cli_model extends CI_Model
         $this->db->trans_commit();
 
 		exit;
-    }
+	}
+
+    /* --------------------------------------------------------------------------------------------
+     *
+	 * Nettoyer S3 documents
+	 *
+	 * ---------------------------------------------------------------------------------------------
+	 *
+	 * Cette fonction liste tous les objets dans le bucket S3 d'un repertoire indique, et 
+	 * determine le nombre d'objets ayant une entree dans la base de donnees.
+	 *
+	 * Les objets introuvables sont supprimes.
+     *
+	 * @TODO la supression
+	 *
+     * -------------------------------------------------------------------------------------------- */
+	function nettoyer_s3_documents($repertoire)
+	{
+		if ( ! in_array($repertoire, ['evaluations', 'soumissions']))
+			exit(9);
+
+		$objets = $this->Document_model->lister_objets_s3(['repertoire' => $repertoire]);
+
+		if (empty($objets))
+			exit;
+
+		// Correspondance repertoire <-> table
+
+		$rt = [
+			'evaluations' => 'documents',			// enseignants
+			'soumissions' => 'documents_etudiants'	// etudiants
+		];
+
+		$introuvables = [];
+
+		foreach($objets as $o)
+		{
+			// Les thumbnails ne sont pas indexes, et sont lies a un document
+
+			if (preg_match('/_tn\./', $o))
+				continue;
+
+			// Chercher le fichier dans la base de donnees
+
+			$this->db->where('efface', 0);
+			$this->db->where('doc_filename', $o);
+
+			$query = $this->db->get($rt[$repertoire]);
+
+			// Le document est introuvable
+
+			if ( ! $query->num_rows() > 0)
+			{
+				$introuvables[] = $o;
+			}
+		}	
+
+		if (empty($introuvables))
+			exit;
+
+		$suppressions = 0;
+
+		foreach($introuvables as $d)
+		{
+			$doc_filename 	 = $d;
+			$doc_tn_filename = NULL;
+
+			if ($repertoire == 'soumissions')
+			{
+				$parts = pathinfo($d);
+				$doc_tn_filename = $parts['filename'] . '_tn.' . $parts['extension'];
+			}
+
+			/*
+			if ($s3Client->doesObjectExist($bucket, $repertoire . '/' . $doc_filename))
+			{
+				$result = $s3Client->deleteObject([
+					'Bucket' => $bucket,
+					'Key'    => $repertoire . '/' . $doc_filename
+				]);
+
+				$suppressions++;
+			}	
+			*/
+
+			if (empty($doc_tn_filename))
+				continue;
+
+			/*
+			if ($s3Client->doesObjectExist($bucket, $repertoire . '/' . $doc_tn_filename))
+			{
+				$result = $s3Client->deleteObject([
+					'Bucket' => $bucket,
+					'Key'    => $repertoire . '/' . $doc_tn_filename
+				]);
+
+				$suppressions++;
+			}	
+			*/
+		}
+
+		echo $suppressions . ' objets supprimes' . "\n";
+	}
 
     /* ------------------------------------------------------------------------
      *

@@ -31,7 +31,7 @@
 
         <div class="space"></div>
 
-        Ces documents sont en réalité les images que les enseignants ont ajoutées à leurs questions.<br />
+        Ces documents sont les téléversements des étudiants dans leur soumission.<br />
         Nombre de documents vérifiés : <?= $documents_verifies; ?>
 
         <div class="tspace"></div>
@@ -51,19 +51,26 @@
                         <th style="width: 100px; text-align: center">Groupe ID</th>
                         <th style="width: 180px">Date</th>
                         <th>Nom du fichier</th>
-                        <th style="width: 100px">MIME</th>
+						<th style="width: 100px">MIME</th>
+						<th style="width: 150px">Soumission</th>
+						<th style="width: 150px">des soumission</th>
                         <th style="width: 80px; text-align: center">Disque</th>
                         <th style="width: 80px; text-align: center">S3</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <? foreach($fichiers_manquants as $filename => $f) : ?>
+					<? 
+ 						foreach($fichiers_manquants as $f) : 
+							$filename = $f['doc_filename']; 
+					?>
                         <tr>
                             <td style="text-align: center"><?= $f['doc_id']; ?></td>
                             <td style="text-align: center"><?= $f['groupe_id']; ?></td>
                             <td><?= $f['ajout_date']; ?></td>
                             <td><?= $filename; ?></td>
                             <td><?= $f['doc_mime_type']; ?></td>
+							<td><a href="<?= base_url() . 'consulter/' . $f['soumission_reference']; ?>" target="_blank"><?= $f['soumission_reference']; ?></a></td>
+							<td><?= $f['des_soumissions'] ? 'oui' : '-'; ?></td>
                             <td style="text-align: center">
                                 <? if ( ! $f['s3'] && file_exists(FCPATH . $this->config->item('documents_path') . $filename)) : ?>
 
@@ -80,7 +87,7 @@
                             <td style="text-align: center">
                                 <? if ($f['s3']) : ?>
 
-                                    <a href="<?= $this->config->item('s3_url', 'amazon') . 'evaluations/' . $filename; ?>" target="_blank">
+                                    <a href="<?= $this->config->item('s3_url', 'amazon') . 'soumissions/' . $filename; ?>" target="_blank">
                                         <i class="fa fa-amazon"></i>
                                     </a>
 

@@ -2622,8 +2622,10 @@ class Document_model extends CI_Model
      * evaluations.
      *
      * -------------------------------------------------------------------------------------------- */
-function detecter_documents_manquants_evaluations()
-    {
+	function detecter_documents_manquants_evaluations()
+	{
+		$objets = $this->lister_objets_s3(['repertoire' => 'evaluations']);
+
         $documents_manquants = array();
         $fichiers_manquants = array();
 
@@ -2635,7 +2637,6 @@ function detecter_documents_manquants_evaluations()
 
         $documents = array();
 
-        $this->db->select ('d.doc_id, d.groupe_id, d.doc_filename, d.doc_sha256, d.doc_sha256_file, d.doc_mime_type, d.s3, d.ajout_date, d.ajout_epoch, d.efface');
         $this->db->from   ('documents as d');
         $this->db->where  ('d.efface', 0);
 
@@ -2658,9 +2659,9 @@ function detecter_documents_manquants_evaluations()
                     continue;
 
                 if ($d['s3'])
-                {
-                    if ( ! $this->existe_s3(array('dossier' => 'evaluations', 'key' => $d['doc_filename'])))
-                    {
+				{
+					if ( ! in_array($d['doc_filename'], $objets))
+					{
                         $documents_manquants[$d['doc_id']] = $d;
                         $fichiers_manquants[$d['doc_id']]  = $d['doc_filename'];
                     }
@@ -2692,120 +2693,158 @@ function detecter_documents_manquants_evaluations()
      * Detecter les documents manquants des soumissions
      *
      * --------------------------------------------------------------------------------------------
-     *
-     * Ces documents sont en realite les images que les enseignants ont ajoutes a leurs questions,
-     * presentes dans les soumissions.
+	 *
+	 * Il y a deux types de documents dans les soumissions :
+	 *
+	 * - les televersements des etudiants (dans la table documents_etudiants)
+	 * - les images des questions (dans la table documents)
      *
      * -------------------------------------------------------------------------------------------- */
     function detecter_documents_manquants_soumissions()
-    {
-        $fichiers_manquants = array();
-        $fichiers_verifies  = array(); // Pour eviter de verifier plusieurs fois le meme fichier
+	{
+		$fichiers_manquants = [];
+
+		$fichiers_verifies = [];
         $documents_verifies = 0;
 
-        //
-        // Extraire les soumissions
-        //
+		//
+		// Verifier que les televersements des etudiants ne sont pas manquants
+		//
+
+		$objets = $this->lister_objets_s3(['repertoire' => 'soumissions']);
+
+        $documents_etudiants = array();
+
+        $this->db->where ('efface', 0);
+        $query = $this->db->get($this->documents_etudiants_t);
+
+        if ($query->num_rows() > 0)
+		{
+			$documents_etudiants = $query->result_array();
+			$documents_etudiants = array_keys_swap($documents_etudiants, 'doc_id');
+		}
+
+		if ( ! empty($objets) && ! empty($documents_etudiants))
+		{
+			foreach($documents_etudiants as $d)
+			{
+				$d_arr = [
+					'doc_id' => $d['doc_id'],
+					'doc_filename' => $d['doc_filename'],
+					'doc_mime_type' => $d['doc_mime_type'],
+					'groupe_id' => $d['groupe_id'],
+					'ajout_date' => $d['ajout_date'],
+					's3' => $d['s3'],
+					'des_soumissions' => 0,
+					'soumission_id' => $d['soumission_id'],
+					'soumission_reference' => $d['soumission_reference']
+				];
+
+				if ( ! empty($d['doc_filename']))
+				{
+					$fichiers_verifies[] = $d['doc_filename'];
+					$documents_verifies++;
+				
+					if ($d['s3'])
+					{
+						if ( ! in_array($d['doc_filename'], $objets))
+						{
+							$fichiers_manquants[] = $d_arr;
+						}
+					}
+					else
+					{
+						if ( ! file_exists(FCPATH . $this->config->item('documents_path') . $d['doc_filename']))
+						{
+							$fichiers_manquants[] = $d_arr;
+						}
+					}
+				}
+
+				if ( ! empty($d['doc_tn_filename']))
+				{
+					$d_arr['doc_filename'] = $d['doc_tn_filename'];
+					$d_arr['doc_mime_type'] = $d['doc_tn_mime_type'];
+
+					$fichiers_verifies[] = $d['doc_tn_filename'];
+					$documents_verifies++;
+				
+					if ($d['s3'])
+					{
+						if ( ! in_array($d['doc_tn_filename'], $objets))
+						{
+							$fichiers_manquants[] = $d_arr;
+						}
+					}
+					else
+					{
+						if ( ! file_exists(FCPATH . $this->config->item('documents_path') . $d['doc_tn_filename']))
+						{
+							$fichiers_manquants[] = $d_arr;
+						}
+					}
+				}
+			}
+		}
+
+		//
+		// Verifier que les documents (images) des enseignants presentent dans 
+		// les soumissions ne sont pas manquantes
+		//
+
+		$objets = $this->lister_objets_s3(['repertoire' => 'evaluations']);
 
         $soumissions = array();
 
-        $this->db->select ('s.soumission_id, s.images_data_gz');
-        $this->db->from   ('soumissions as s');
-        $this->db->where  ('s.efface', 0);
+        $this->db->select ('soumission_id, soumission_reference, images_data_gz');
+        $this->db->where  ('efface', 0);
         
-        $query = $this->db->get();
+        $query = $this->db->get($this->soumissions_t);
         
         if ($query->num_rows() > 0)
         {
             $soumissions = $query->result_array();
         }
 
-        //
-        // Extraire les documents
-        //
-
-        $documents = array();
-        $fichiers = array();
-
-        $this->db->select ('d.doc_id, d.groupe_id, d.doc_filename, d.doc_sha256, d.doc_sha256_file, d.doc_mime_type, d.s3, d.ajout_date, d.ajout_epoch, d.efface');
-        $this->db->from   ('documents as d');
-        $this->db->where  ('d.efface', 0);
-
-        $query = $this->db->get();
-        
-        if ($query->num_rows() > 0)
-        {
-            foreach($query->result_array() as $row)
-            {
-                $documents[$row['doc_id']] = $row;
-                
-                if ( ! array_key_exists($row['doc_filename'], $fichiers))
-                {
-                    $fichiers[$row['doc_filename']] = array(
-                        'doc_sha256' => $row['doc_sha256'],
-                        'doc_sha256_file' => $row['doc_sha256_file'],
-                        's3' => $row['s3'],
-                        'doc_ids' => array()
-                    );
-                }
-            
-                if ($row['doc_sha256'] != $fichiers[$row['doc_filename']]['doc_sha256'])
-                {
-                    echo "Erreur : Deux fichiers avec le même nom [" . $row['doc_filename'] . "] n'ont pas la même hash.";
-                    die;
-                }
-
-                $fichiers[$row['doc_filename']]['doc_ids'][] = $row['doc_id'];
-            }
-        }
-
-        if ($soumissions)
-        {
+		if ( ! empty($objets) && ! empty($soumissions))
+		{
             foreach($soumissions as $s)
             {
                 if (empty($s['images_data_gz']))
                     continue;
 
-                $images = json_decode(gzuncompress($s['images_data_gz']), TRUE);
+				$images = json_decode(gzuncompress($s['images_data_gz']), TRUE);
 
                 if (empty($images) || ! is_array($images))
-                    continue;
+					continue;
 
                 foreach($images as $img)
-                {
+				{
+					$img_arr = [
+						'doc_id' => $img['doc_id'],
+						'doc_filename' => $img['doc_filename'],
+						'doc_mime_type' => $img['doc_mime_type'],
+						'groupe_id' => $img['groupe_id'],
+						'ajout_date' => $img['ajout_date'],
+						's3' => 1,
+						'des_soumissions' => 1,
+						'soumission_id' => $s['soumission_id'],
+						'soumission_reference' => $s['soumission_reference']
+					];
+
                     if (in_array($img['doc_filename'], $fichiers_verifies))
                         continue;
 
-                    if ( ! array_key_exists('s3', $img) || $img['s3'] == 0)
-                    {
-                        if ( ! file_exists(FCPATH . $this->config->item('documents_path') . $img['doc_filename']))
-                        {
-                            $fichiers_manquants[$img['doc_filename']] = array(
-                                'doc_id'        => $img['doc_id'],
-                                'groupe_id'     => $img['groupe_id'],
-                                'ajout_date'    => $img['ajout_date'],
-                                'ajout_epoch'   => $img['ajout_epoch'],
-                                'doc_mime_type' => $img['doc_mime_type'],
-                                's3'            => 0,
-                                'doc_sha256'    => $img['doc_sha256'],
-                                'doc_sha256_file' => $img['doc_sha256_file'],
-                            );
-                        }
-                    }
-                    else
-                    {
-                        // @TODO
-
-                        //
-                        // Verifier si le fichier est present sur S3.
-                        // 
-
-                    }
+					if ( ! in_array($img['doc_filename'], $objets) && ! file_exists(FCPATH . $this->config->item('documents_path') . $img['doc_filename']))
+					{
+						$fichiers_manquants[] = $img_arr;
+					}
 
                     $fichiers_verifies[] = $img['doc_filename'];
-                    $documents_verifies++;
-                } // foreach
-            }
+					$documents_verifies++;
+
+                }
+			}
 
         } // if
 
@@ -2892,7 +2931,7 @@ function detecter_documents_manquants_evaluations()
      *    'documents'. Il faut toutefois verifier qu'aucune soumission ne les utilisent.
      *
      * -------------------------------------------------------------------------------------------- */
-    function detecter_documents_superflus($options = array())
+    function OBSOLETE_detecter_documents_superflus($options = array())
     {
     	$options = array_merge(
             array(
@@ -3140,7 +3179,7 @@ function detecter_documents_manquants_evaluations()
      * - documents d'evaluations dedbutees jamais envoyees
      *
      * -------------------------------------------------------------------------------------------- */
-    function detecter_documents_superflus_soumissions($options = array())
+    function OBSOLETE_detecter_documents_superflus_soumissions($options = array())
     {
     	$options = array_merge(
             array(
@@ -3269,5 +3308,56 @@ function detecter_documents_manquants_evaluations()
 		// 
 
 		return $documents_superflus;
-    }
+	}
+
+    /* --------------------------------------------------------------------------------------------
+     *
+     * Lister les objets S3
+     *
+     * -------------------------------------------------------------------------------------------- */
+    function lister_objets_s3($options = array())
+    {
+    	$options = array_merge(
+			array(
+				'repertoire' => 'evaluations'
+           ),
+           $options
+		);
+
+		$s3Client = new S3Client([
+			'version' 		=> '2006-03-01',
+			'region' 		=> $this->config->item('region', 'amazon'),
+			'credentials' 	=> [
+				'key'    => $this->config->item('api_key', 'amazon'),
+				'secret' => $this->config->item('api_secret', 'amazon'),
+			]			
+		]);
+
+		$results = $s3Client->getPaginator('ListObjectsV2', [
+			'Bucket' => 'kovao',
+			'Prefix' => $options['repertoire'] . '/'
+		]);
+
+		$objets = [];
+
+		foreach ($results as $result) 
+		{
+			if (isset($result['Contents'])) 
+			{
+				foreach ($result['Contents'] as $object)
+				{
+					if ($object['Size'] == 0)
+						continue; 
+
+					$key = $object['Key'];
+
+					$doc_filename = basename($key);
+
+					$objets[] = $doc_filename;
+				}
+			}
+		}
+
+		return $objets;
+	}
 }
