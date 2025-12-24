@@ -357,6 +357,7 @@ class Cli_model extends CI_Model
 		//
 
 		$docs_effaces = [];
+		$docs_effaces_fichiers = [];
 
 		$this->db->where('efface', 1);
 		$this->db->where('efface_epoch <', $epoch);
