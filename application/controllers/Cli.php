@@ -203,14 +203,14 @@ class Cli extends CI_Controller
      * Cette function sert a purger les documents effaces des soumissions.
      *
      * ------------------------------------------------------------------------ */
-    public function purger_documents_etudiants($jours = 30)
+    public function purger_documents_etudiants($effacement = 0, $jours = 30)
     {
-        echo $this->Cli_model->purger_documents_etudiants($jours);
+        echo $this->Cli_model->purger_documents_etudiants($effacement, $jours);
 	}
 
     /* ------------------------------------------------------------------------
      *
-     * nettoyer s3 documents
+     * nettoyer s3 evaluations
      *
      * ------------------------------------------------------------------------
      *
@@ -219,9 +219,25 @@ class Cli extends CI_Controller
 	 * et les suppriment. 
      *
      * ------------------------------------------------------------------------ */
-    public function nettoyer_s3_documents($repertoire = 'evaluations')
+    public function nettoyer_s3_evaluations($effacement = 0)
     {
-        $this->Cli_model->nettoyer_s3_documents($repertoire);
+        $this->Cli_model->nettoyer_s3_evaluations($effacement);
+	}
+
+    /* ------------------------------------------------------------------------
+     *
+     * nettoyer s3 soumissions
+     *
+     * ------------------------------------------------------------------------
+     *
+	 * Cette fonction extrait la liste de tous les objets S3, determine ceux
+	 * qui ne sont plus neecessaires (qui ne sont pas dans la base de donnees) 
+	 * et les suppriment. 
+     *
+     * ------------------------------------------------------------------------ */
+    public function nettoyer_s3_soumissions($effacement = 0)
+    {
+        $this->Cli_model->nettoyer_s3_soumissions($effacement);
 	}
 
     /* ------------------------------------------------------------------------

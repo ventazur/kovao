@@ -309,11 +309,13 @@ class Cli_model extends CI_Model
      * -------------------------------------------------------------------------------------------- */
 	function purger_documents_enseignants($effacement = 0, $jours = 180)
 	{
+		// Determiner la date la plus eloignee pour l'effacement
+		// base sur le nombre de jours de l'argument
+
 		$maintenant = new DateTimeImmutable();
 		$intervalle = new DateInterval('P' . $jours . 'D'); // P180D
 
 		$date_passee = $maintenant->sub($intervalle);
-
 		$epoch = $date_passee->getTimestamp();
 
 		//
@@ -322,7 +324,6 @@ class Cli_model extends CI_Model
 
 		$rapport = [
 			'cli' 	 => 1,
-			'erreur' => 0,
 			'action' => 'purger_documents_enseignants',
 			'epoch'  => date('U'),
 			'date'   => date_humanize(date('U'), TRUE)
@@ -405,6 +406,8 @@ class Cli_model extends CI_Model
 					$soumissions_images[] = $img['doc_filename'];
                 }
 			}
+
+			$soumissions_images = array_unique($soumissions_images);
 		}
 
 		//
@@ -454,6 +457,10 @@ class Cli_model extends CI_Model
 							'Key'    => 'evaluations/' . $f, 
 						]);
 					}
+					elseif (file_exists(FCPATH . $this->config->item('documents_path') . $f))
+					{
+						unlink(FCPATH . $this->config->item('documents_path') . $f);
+					}
 
 					$rapport_data['fichiers'][] = $f;
 					$rapport_data['fichiers_supprimes']++;
@@ -467,7 +474,7 @@ class Cli_model extends CI_Model
 		// Effacer les lignes de tous les documents a supprimer
 		//
 
-		echo 'Suppression de ' . count($docs_effaces) . ' documents effacés...' . "\n";
+		echo 'Suppression de ' . count($docs_effaces) . ' documents effacés avant le ' . date_humanize($epoch) . "\n";
 
 		if ($effacement)
 		{
@@ -485,12 +492,15 @@ class Cli_model extends CI_Model
 		// Ecrire le rapport
 		//
 
+		$rapport['data'] = json_encode($rapport_data, $json_options);
+
 		if ($effacement)
 		{
-			$rapport_data['taille_supprimee'] = $taille_supprimee;
-			$rapport['data'] = json_encode($rapport_data, $json_options);
-
 			$this->db->insert('rapports_maintenance', $rapport);
+		}
+		else
+		{
+			print_r($rapport);
 		}
 
 		echo "\n";
@@ -510,7 +520,7 @@ class Cli_model extends CI_Model
 	 * Il faut purger les documents effaces de la table 'documents_etudiants'.
 	 *
      * -------------------------------------------------------------------------------------------- */
-	function purger_documents_etudiants($jours = 30)
+	function purger_documents_etudiants($effacement = 0, $jours = 30)
 	{
 		// Determiner la date la plus eloignee pour l'effacement
 		// base sur le nombre de jours de l'argument
@@ -527,7 +537,6 @@ class Cli_model extends CI_Model
 
 		$rapport = [
 			'cli' 	 => 1,
-			'erreur' => 0,
 			'action' => 'purger_documents_etudiants',
 			'epoch'  => date('U'),
 			'date'   => date_humanize(date('U'), TRUE)
@@ -535,8 +544,9 @@ class Cli_model extends CI_Model
 
 		$rapport_data = [
 			'documents_supprimes' => 0,
-			'erreurs_suppressions' => 0,
-			'documents' => []
+			'fichiers_supprimes' => 0,
+			'documents' => [],
+			'fichiers' => []
 		];
 
 		$json_options = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
@@ -544,125 +554,112 @@ class Cli_model extends CI_Model
 		//
 		// Extraire tous les documents a effacer respectant le critere d'expiration en jours
 		//
-		
+
+		$docs_effaces = [];
+		$docs_effaces_ids = [];
+		$docs_effaces_fichiers = [];
+
+		$this->db->select(
+			'doc_id', 'groupe_id', 'etudiant_id', 'soumission_id', 'soumission_reference', 'evaluation_id', 'question_id',
+			's3', 'doc_filename', 'doc_tn_filename', 'ajout_date', 'ajout_epoch', 'efface_date', 'efface_epoch'
+		);
 		$this->db->where('efface', 1);
 		$this->db->where('efface_epoch <', $epoch);
 
 		$query = $this->db->get($this->documents_etudiants_t);
 
-        if ( ! $query->num_rows() > 0)
-             return 0;
+		if ($query->num_rows() > 0)
+		{
+			$docs_effaces = $query->result_array();
+			$docs_effaces_ids = array_column($query->result_array(), 'doc_id');
+			$docs_effaces_fichiers_1 = array_column($query->result_array(), 'doc_filename');
+			$docs_effaces_fichiers_2 = array_column($query->result_array(), 'doc_tn_filename');
 
-		$docs = $query->result_array();
-		$doc_ids = array_column($docs, 'doc_id');
+			$docs_effaces_fichiers = array_merge($docs_effaces_fichiers_1, $docs_effaces_fichiers_2);
+			$docs_effaces_fichiers = array_unique($docs_effaces_fichiers);
+		}
 
 		//
 		// Supprimer les documents etudiants (des soumissions)
 		//
 
-		echo 'Suppression de ' . count($docs) . ' documents effacés avant le ' . date_humanize($epoch) . "\n";
-
-		$s3Client = new S3Client([
-			'version' 		=> '2006-03-01',
-			'region' 		=> $this->config->item('region', 'amazon'),
-			'credentials' 	=> [
-				'key'    => $this->config->item('api_key', 'amazon'),
-				'secret' => $this->config->item('api_secret', 'amazon'),
-			]			
-		]);
-
-		$bucket = 'kovao';
-
-		$taille_supprimee = 0;
-
-		foreach($docs as $d)
+		if ( ! empty($docs_effaces_fichiers))
 		{
-			if ( ! $d['s3'])
-				continue;
+			echo 'Suppression de ' . count($docs_effaces_fichiers) . ' fichiers...' . "\n";
 
-			// surete
-			if ( ! $d['efface'])
-				continue;
-
-			try 
+			if ($effacement)
 			{
-				if ($s3Client->doesObjectExist($bucket, 'soumissions/' . $d['doc_filename'])) 
+				$s3Client = new S3Client([
+					'version' 		=> '2006-03-01',
+					'region' 		=> $this->config->item('region', 'amazon'),
+					'credentials' 	=> [
+						'key'    => $this->config->item('api_key', 'amazon'),
+						'secret' => $this->config->item('api_secret', 'amazon'),
+					]			
+				]);
+
+				$bucket = 'kovao';
+
+				foreach($docs_effaces_fichiers as $f)
 				{
-					$result = $s3Client->deleteObject([
-						'Bucket' => $bucket,
-						'Key'    => 'soumissions/' . $d['doc_filename'],
-					]);
+					if ($s3Client->doesObjectExist($bucket, 'soumissions/' . $f)) 
+					{
+						$result = $s3Client->deleteObject([
+							'Bucket' => $bucket,
+							'Key'    => 'soumissions/' . $f
+						]);
 
-					$taille_supprimee += $d['doc_filesize'];
+						$rapport_data['fichiers'][] = $f;
+						$rapport_data['fichiers_supprimes']++;
+					}
+					elseif (file_exists(FCPATH . $this->config->item('documents_path') . $f))
+					{
+						unlink(FCPATH . $this->config->item('documents_path') . $f);
+					}
+
+					echo '.';
 				}
-
-				if ($s3Client->doesObjectExist($bucket, 'soumissions/' . $d['doc_tn_filename'])) 
-				{
-					$result = $s3Client->deleteObject([
-						'Bucket' => $bucket,
-						'Key'    => 'soumissions/' . $d['doc_tn_filename'], 
-					]);
-
-					$taille_supprimee += $d['doc_tn_filesize'];
-				}
-
-			}
-			catch (Aws\S3\Exception\S3Exception $e)
-			{
-				echo 'E'; 
-				
-				$rapport_data['erreurs_suppressions']++;
-
-				$rapport_data['documents'][] = [
-					'doc_id'	   	  => $d['doc_id'],	
-					'question_id'  	  => $d['question_id'],
-					'doc_filename' 	  => $d['doc_filename'],
-					'doc_tn_filename' => $d['doc_tn_filename'],
-					'doc_sha256_file' => $d['doc_sha256_file'],
-					'doc_filesize'    => $d['doc_filesize'],
-					'doc_tn_filesize' => $d['doc_tn_filesize'],
-					'erreur'	      => 1
-				];
-
-				continue;
-			}
-
-			$rapport_data['documents'][] = [
-				'doc_id'	      => $d['doc_id'],	
-				'question_id'     => $d['question_id'],
-				'doc_filename'    => $d['doc_filename'],
-				'doc_tn_filename' => $d['doc_filename'],
-				'doc_sha256_file' => $d['doc_sha256_file'],
-				'doc_filesize'    => $d['doc_filesize'],
-				'doc_tn_filesize' => $d['doc_tn_filesize']
-			];
-
-			$rapport_data['documents_supprimes']++;
-
-			echo '.';
+			}  // efacement
 		}
 
 		//
 		// Effacer les lignes de tous les documents a supprimer
 		//
 
-		$chunk_size = 500;
-		$chunks = array_chunk($doc_ids, $chunk_size);
+		if ( ! empty($docs_effaces))
+		{
+			echo 'Suppression de ' . count($docs_effaces) . ' documents effacés avant le ' . date_humanize($epoch) . "\n";
 
-		foreach($chunks as $c)
-		{	
-			$this->db->where_in('doc_id', $c);
-			$this->db->delete($this->documents_etudiants_t);
+			if ($effacement)
+			{
+				$chunk_size = 500;
+				$chunks = array_chunk($docs_effaces_ids, $chunk_size);
+
+				foreach($chunks as $c)
+				{	
+					$this->db->where_in('doc_id', $c);
+					$this->db->delete($this->documents_etudiants_t);
+				}
+
+				$rapport_data['documents'] = $docs_effaces;
+				$rapport_data['documents_supprimes'] = count($docs_effaces);
+			} // effacement
 		}
 
 		//
 		// Ecrire le rapport
 		//
 
-		$rapport_data['taille_supprimee'] = $taille_supprimee;
 		$rapport['data'] = json_encode($rapport_data, $json_options);
 
-		$this->db->insert('rapports_maintenance', $rapport);
+		if ($effacement)
+		{
+			$this->db->insert('rapports_maintenance', $rapport);
+		}
+		else
+		{
+			print_r($rapport);
+		}
 
 		echo "\n";
 
@@ -677,8 +674,7 @@ class Cli_model extends CI_Model
 	 * 
 	 * Cette fonction permet de supprimer les items effaces.
 	 *
-	 * (!) Les documents doivent etre supprimes en meme temps que le fichier sur le disque/S3, dans
-	 *     une autre function dediee a cette fin.
+	 * (!) Les documents doivent etre supprimes dans une autre function dediee a cette fin.
 	 *
 	 * version 2 (2025-12-19)
      *
@@ -839,104 +835,207 @@ class Cli_model extends CI_Model
 
     /* --------------------------------------------------------------------------------------------
      *
-	 * Nettoyer S3 documents
+	 * Nettoyer S3 evaluations
 	 *
 	 * ---------------------------------------------------------------------------------------------
 	 *
-	 * Cette fonction liste tous les objets dans le bucket S3 d'un repertoire indique, et 
-	 * determine le nombre d'objets ayant une entree dans la base de donnees.
+	 * Cette fonction liste tous les objets dans le bucket S3, puis determine les objets ayant une 
+	 * entree dans la base de donnees.
+	 *
+	 * evaluations/ -> documents + soumissions
 	 *
 	 * Les objets introuvables sont supprimes.
      *
-	 * @TODO la supression
-	 *
      * -------------------------------------------------------------------------------------------- */
-	function nettoyer_s3_documents($repertoire)
+	function nettoyer_s3_evaluations($effacement = 0)
 	{
-		if ( ! in_array($repertoire, ['evaluations', 'soumissions']))
-			exit(9);
-
-		$objets = $this->Document_model->lister_objets_s3(['repertoire' => $repertoire]);
+		$objets = $this->Document_model->lister_objets_s3(['repertoire' => 'evaluations']);
 
 		if (empty($objets))
-			exit;
-
-		// Correspondance repertoire <-> table
-
-		$rt = [
-			'evaluations' => 'documents',			// enseignants
-			'soumissions' => 'documents_etudiants'	// etudiants
-		];
+		{
+			echo "Le répertoire evaluations/ du conteneur S3 ne contient aucun objet." . "\n";
+			return;
+		}
 
 		$introuvables = [];
 
-		foreach($objets as $o)
+		//
+		// Extraire tous les fichiers des documents (enseignants)
+		//
+
+		$docs = [];
+		$docs_fichiers = [];
+
+		$this->db->where('efface', 0);
+		$query = $this->db->get($this->documents_t);
+
+		if ($query->num_rows() > 0)
 		{
-			// Les thumbnails ne sont pas indexes, et sont lies a un document
+			$docs = $query->result_array();
 
-			if (preg_match('/_tn\./', $o))
-				continue;
-
-			// Chercher le fichier dans la base de donnees
-
-			$this->db->where('efface', 0);
-			$this->db->where('doc_filename', $o);
-
-			$query = $this->db->get($rt[$repertoire]);
-
-			// Le document est introuvable
-
-			if ( ! $query->num_rows() > 0)
-			{
-				$introuvables[] = $o;
-			}
+			$docs_fichiers = array_column($query->result_array(), 'doc_filename');
+			$docs_fichiers = array_unique($docs_fichiers);
 		}	
 
-		if (empty($introuvables))
-			exit;
+		//
+		// Extraire tous les fichiers (images) des soumissions
+		//
 
-		$suppressions = 0;
+		$soumissions = [];
+		$soumissions_images = [];
 
-		foreach($introuvables as $d)
+		$this->db->where('efface', 0);
+		$query = $this->db->get($this->soumissions_t);
+
+		if ($query->num_rows() > 0)
 		{
-			$doc_filename 	 = $d;
-			$doc_tn_filename = NULL;
-
-			if ($repertoire == 'soumissions')
-			{
-				$parts = pathinfo($d);
-				$doc_tn_filename = $parts['filename'] . '_tn.' . $parts['extension'];
-			}
-
-			/*
-			if ($s3Client->doesObjectExist($bucket, $repertoire . '/' . $doc_filename))
-			{
-				$result = $s3Client->deleteObject([
-					'Bucket' => $bucket,
-					'Key'    => $repertoire . '/' . $doc_filename
-				]);
-
-				$suppressions++;
-			}	
-			*/
-
-			if (empty($doc_tn_filename))
-				continue;
-
-			/*
-			if ($s3Client->doesObjectExist($bucket, $repertoire . '/' . $doc_tn_filename))
-			{
-				$result = $s3Client->deleteObject([
-					'Bucket' => $bucket,
-					'Key'    => $repertoire . '/' . $doc_tn_filename
-				]);
-
-				$suppressions++;
-			}	
-			*/
+			$soumissions = $query->result_array();
 		}
 
-		echo $suppressions . ' objets supprimes' . "\n";
+		if ( ! empty($soumissions))
+		{
+			foreach($soumissions as $s)
+			{
+                if (empty($s['images_data_gz']))
+                    continue;
+
+				$images = json_decode(gzuncompress($s['images_data_gz']), TRUE);
+
+                if (empty($images) || ! is_array($images))
+					continue;
+
+                foreach($images as $img)
+				{
+					$soumissions_images[] = $img['doc_filename'];
+                }
+			}
+
+			$soumissions_images = array_unique($soumissions_images);
+		}
+
+		$objets_a_supprimer = [];
+
+		foreach($objets as $o)
+		{
+			if (in_array($o, $docs_fichiers))
+				continue;
+
+			if (in_array($o, $soumissions_images))
+				continue;
+
+			$objets_a_supprimer[] = $o;
+		}	
+
+		echo 'Supression de ' . count($objets_a_supprimer) . ' objets (sur ' . count($objets) . ')...' . "\n";
+
+		if ($effacement && ! empty($objets_a_supprimer))
+		{
+			$suppressions = 0;
+
+			foreach($objets_a_supprimer as $o)
+			{
+				if ($s3Client->doesObjectExist($bucket, 'evaluations/' . $o))
+				{
+					$result = $s3Client->deleteObject([
+						'Bucket' => $bucket,
+						'Key'    => 'evaluations/' . $o
+					]);
+
+					$suppressions++;
+
+					echo '.';
+				}	
+			}
+
+			echo "\n";
+			echo $suppressions . ' objets supprimes' . "\n";
+		}
+
+		return;
+	}
+
+    /* --------------------------------------------------------------------------------------------
+     *
+	 * Nettoyer S3 soumissions
+	 *
+	 * ---------------------------------------------------------------------------------------------
+	 *
+	 * Cette fonction liste tous les objets dans le bucket S3, puis determine les objets ayant une 
+	 * entree dans la base de donnees.
+	 *
+	 * soumissions/ -> documents_etudiants
+	 *
+	 * Les objets introuvables sont supprimes.
+     *
+     * -------------------------------------------------------------------------------------------- */
+	function nettoyer_s3_soumissions($effacement = 0)
+	{
+		$objets = $this->Document_model->lister_objets_s3(['repertoire' => 'soumissions']);
+
+		if (empty($objets))
+		{
+			echo "Le répertoire soumissions/ du conteneur S3 ne contient aucun objet." . "\n";
+			return;
+		}
+
+		//
+		// Extraire tous les fichiers des documents_etudiants
+		//
+
+		$docs_etudiants = [];
+		$docs_etudiants_fichiers = [];
+
+		$this->db->where('efface', 0);
+		$query = $this->db->get($this->documents_etudiants_t);
+
+		if ($query->num_rows() > 0)
+		{
+			$docs_etudiants = $query->result_array();
+
+			$docs_etudiants_fichiers_1 = array_column($query->result_array(), 'doc_filename');
+			$docs_etudiants_fichiers_2 = array_column($query->result_array(), 'doc_tn_filename');
+			$docs_etudiants_fichiers   = array_merge($docs_etudiants_fichiers_1, $docs_etudiants_fichiers_2);
+			$docs_etudiants_fichiers   = array_unique($docs_etudiants_fichiers);
+
+			unset($docs_etudiants_fichiers_1, $docs_etudiants_fichiers_2);
+		}	
+
+		$objets_a_supprimer = [];
+
+		foreach($objets as $o)
+		{
+			if (in_array($o, $docs_etudiants_fichiers))
+				continue;
+
+			$objets_a_supprimer[] = $o;
+		}	
+
+		echo 'Supression de ' . count($objets_a_supprimer) . ' objets (sur ' . count($objets) . ')...' . "\n";
+
+		if ($effacement && ! empty($objets_a_supprimer))
+		{
+			$suppressions = 0;
+
+			foreach($objets_a_supprimer as $o)
+			{
+				if ($s3Client->doesObjectExist($bucket, 'soumissions/' . $o))
+				{
+					$result = $s3Client->deleteObject([
+						'Bucket' => $bucket,
+						'Key'    => 'soumissions/' . $o
+					]);
+
+					$suppressions++;
+
+					echo '.';
+				}	
+			}
+	
+			echo "\n";
+			echo $suppressions . ' objets supprimes' . "\n";
+		}
+
+		return;
 	}
 
     /* ------------------------------------------------------------------------
