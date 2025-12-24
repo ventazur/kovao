@@ -474,17 +474,20 @@ class Cli_model extends CI_Model
 		// Effacer les lignes de tous les documents a supprimer
 		//
 
-		echo 'Suppression de ' . count($docs_effaces) . ' documents effacés avant le ' . date_humanize($epoch) . "\n";
-
-		if ($effacement)
+		if ( ! empty($docs_effaces))
 		{
-			$chunk_size = 500;
-			$chunks = array_chunk($docs_effaces_ids, $chunk_size);
+			echo 'Suppression de ' . count($docs_effaces) . ' documents effacés avant le ' . date_humanize($epoch) . "\n";
 
-			foreach($chunks as $c)
-			{	
-				$this->db->where_in('doc_id', $c);
-				$this->db->delete($this->documents_t);
+			if ($effacement)
+			{
+				$chunk_size = 500;
+				$chunks = array_chunk($docs_effaces_ids, $chunk_size);
+
+				foreach($chunks as $c)
+				{	
+					$this->db->where_in('doc_id', $c);
+					$this->db->delete($this->documents_t);
+				}
 			}
 		}
 
@@ -500,6 +503,7 @@ class Cli_model extends CI_Model
 		}
 		else
 		{
+			echo '--- dryrun --- (ajouter 1 en argument pour exécuter)' . "\n";
 			print_r($rapport);
 		}
 
@@ -658,6 +662,7 @@ class Cli_model extends CI_Model
 		}
 		else
 		{
+			echo '--- dryrun --- (ajouter 1 en argument pour exécuter)' . "\n";
 			print_r($rapport);
 		}
 
