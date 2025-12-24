@@ -930,6 +930,17 @@ class Cli_model extends CI_Model
 
 		if ($effacement && ! empty($objets_a_supprimer))
 		{
+			$s3Client = new S3Client([
+				'version' 		=> '2006-03-01',
+				'region' 		=> $this->config->item('region', 'amazon'),
+				'credentials' 	=> [
+					'key'    => $this->config->item('api_key', 'amazon'),
+					'secret' => $this->config->item('api_secret', 'amazon'),
+				]			
+			]);
+
+			$bucket = 'kovao';
+
 			$suppressions = 0;
 
 			foreach($objets_a_supprimer as $o)
@@ -941,9 +952,11 @@ class Cli_model extends CI_Model
 						'Key'    => 'evaluations/' . $o
 					]);
 
-					$suppressions++;
-
-					echo '.';
+					if (isset($result['DeleteMarker']) && $result['DeleteMarker'])
+					{
+						$suppressions++;
+						echo '.';
+					}
 				}	
 			}
 
@@ -1014,6 +1027,17 @@ class Cli_model extends CI_Model
 
 		if ($effacement && ! empty($objets_a_supprimer))
 		{
+			$s3Client = new S3Client([
+				'version' 		=> '2006-03-01',
+				'region' 		=> $this->config->item('region', 'amazon'),
+				'credentials' 	=> [
+					'key'    => $this->config->item('api_key', 'amazon'),
+					'secret' => $this->config->item('api_secret', 'amazon'),
+				]			
+			]);
+
+			$bucket = 'kovao';
+
 			$suppressions = 0;
 
 			foreach($objets_a_supprimer as $o)
@@ -1025,9 +1049,11 @@ class Cli_model extends CI_Model
 						'Key'    => 'soumissions/' . $o
 					]);
 
-					$suppressions++;
-
-					echo '.';
+					if (isset($result['DeleteMarker']) && $result['DeleteMarker'])
+					{
+						$suppressions++;
+						echo '.';
+					}
 				}	
 			}
 	
